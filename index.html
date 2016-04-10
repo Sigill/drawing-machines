@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trochoid-o-graph</title>
+    <style>
+        * { margin: 0; padding: 0;}
+
+        body, html { height:100%; }
+
+        #d {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        #c {
+            display: block;
+            background-color: #212121;
+        }
+    </style>
+</head>
+<body>
+    <div id="d">
+        <canvas id="c"></canvas>
+    </div>
+    <script src="stats.min.js"></script>
+    <script src="requestAnimationFrame.js"></script>
+    <script src="dat.gui.min.js"></script>
+    <script src="trochoid-o-graph-core.js"></script>
+    <script src="trochoid-o-graph-dat-gui.js"></script>
+    <script src="trochoid-o-graph-canvas.js"></script>
+</body>
+</html>
