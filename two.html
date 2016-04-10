@@ -1,0 +1,228 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+    <title>Trochoid-o-graph - Two.js version</title>
+    <script src="url.js"></script>
+    <script src="two.min.js"></script>
+    <script src="trochoid-o-graph-core.js"></script>
+    <script src="stats.min.js"></script>
+    <script src="dat.gui.min.js"></script>
+    <script src="trochoid-o-graph-dat-gui.js"></script>
+    <style>
+        body {
+            background-color: #212121;
+        }
+    </style>
+</head>
+<body>
+    <div class="scripts">
+        <script>
+        var g = new OscillatingDrawingMachine();
+        var type = /(canvas|webgl)/.test(url.type) ? url.type : 'svg';
+        var two = new Two({
+            type: Two.Types[type],
+            fullscreen: true,
+            autostart: true
+        }).appendTo(document.body);
+
+        var stats = new Stats();
+        stats.setMode(0); // 0: fps, 1: ms
+        stats.domElement.style.position = 'absolute';
+        stats.domElement.style.left = '0px';
+        stats.domElement.style.bottom = '0px';
+        document.body.appendChild( stats.domElement );
+
+        var path = two.makePath([], true);
+        path.stroke = 'orangered';
+        path.fill = 'rgba(255, 255, 255, 0)';
+        path.linewidth = 1;
+
+        Epitrochoide.prototype.makeTwoObjects = function(two) {
+            if (typeof this.group !== 'undefined') {
+                two.remove(this.group);
+            }
+
+            var theta = this.theta(0);
+            this.mainCircle = two.makeCircle(0, 0, this.R);
+            this.group = two.makeGroup(this.mainCircle);
+
+            if (this._r > 0) {
+                var points = [];
+                for (var p of this.points) {
+                    points.push(new Two.Anchor(p.x - this.position.x, p.y - this.position.y));
+                }
+                this.path = two.makePath(points, false);
+                this.path.addTo(this.group);
+
+                this.primarySatelliteCircle = two.makeCircle(0, 0, this.r);
+                this.secondarySatelliteCircle = two.makeCircle(0, 0, this.d);
+                this.line = two.makeLine(0, 0, this.d * Math.cos(this.phase2), this.d * Math.sin(this.phase2));
+                this.satelliteGroup = two.makeGroup(this.primarySatelliteCircle, this.secondarySatelliteCircle, this.line);
+                this.satelliteGroup.addTo(this.group);
+            }
+
+            this.group.translation.set(this.position.x, this.position.y);
+            this.group.fill = 'rgba(255, 255, 255, 0)';
+            this.group.stroke = 'orangered';
+        };
+
+        Hypotrochoide.prototype.makeTwoObjects = function(two) {
+            if (typeof this.group !== 'undefined') {
+                two.remove(this.group);
+            }
+
+            var theta = this.theta(0);
+            this.mainCircle = two.makeCircle(0, 0, this.R);
+            this.group = two.makeGroup(this.mainCircle);
+
+            if (this._r > 0) {
+                var points = [];
+                for (var p of this.points) {
+                    points.push(new Two.Anchor(p.x - this.position.x, p.y - this.position.y));
+                }
+                this.path = two.makePath(points, false);
+                this.path.addTo(this.group);
+
+                this.primarySatelliteCircle = two.makeCircle(0, 0, this.r);
+                this.secondarySatelliteCircle = two.makeCircle(0, 0, this.d);
+                this.line = two.makeLine(0, 0, this.d * Math.cos(-this.phase2), this.d * Math.sin(-this.phase2));
+                this.satelliteGroup = two.makeGroup(this.primarySatelliteCircle, this.secondarySatelliteCircle, this.line);
+                this.satelliteGroup.addTo(this.group);
+            }
+
+            this.group.translation.set(this.position.x, this.position.y);
+            this.group.fill = 'rgba(255, 255, 255, 0)';
+            this.group.stroke = 'orangered';
+        };
+
+        Epitrochoide.prototype.draw = function(two, t) {
+            if (this._r > 0) {
+                var theta = this.theta(t);
+                this.satelliteGroup.translation.set((this.R + this.r) * Math.cos(theta), (this.R + this.r) * Math.sin(theta));
+                this.satelliteGroup.rotation = (theta) * (this._R / gcd(this._R, this._r) + 1) + Math.PI;
+            }
+        };
+
+        Hypotrochoide.prototype.draw = function(two, t) {
+            if (this._r > 0) {
+                var theta = this.theta(t);
+                this.satelliteGroup.translation.set((this.R - this.r) * Math.cos(theta), (this.R - this.r) * Math.sin(theta));
+                this.satelliteGroup.rotation = -theta * (this._R / gcd(this._R, this._r) - 1);
+            }
+        };
+
+        g.left.makeTwoObjects(two);
+        g.right.makeTwoObjects(two);
+
+        var PPS = 120;
+        var t = 0;
+        var stepRemainder = 0;
+        var lastUpdateTime = performance.now();
+        var animate = false;
+        var running = false;
+
+        var gui = new DatGuiOscillatingDrawingMachineGui(g);
+
+        function restart() {
+            t = 0;
+            stepRemainder = 0;
+            lastUpdateTime = performance.now();
+            path.vertices.splice(0, path.vertices.length);
+            path.closed = false;
+        }
+
+        function render(frameCount) {
+            stats.begin();
+
+            var interval = (performance.now() - lastUpdateTime);
+            lastUpdateTime = performance.now();
+
+            if (animate) {
+                var step = PPS * interval / 1000 + stepRemainder;
+                var stepCount = Math.floor(step);
+                stepRemainder = step - stepCount;
+
+                t = Math.min(t + stepCount, g.points.length);
+            } else {
+                t = g.points.length;
+            }
+
+            g.left.draw(two, t);
+            g.right.draw(two, t);
+
+            for (var i = path.vertices.length; i < t; ++i) {
+                path.vertices.push(new Two.Anchor(g.points[i].x, g.points[i].y));
+            }
+
+            if (t == g.p) {
+                two.unbind('update');
+                running = false;
+                path.closed = true;
+            }
+
+            stats.end();
+        }
+
+        function handleAnimate(value) {
+            animate = value;
+            if (value) {
+                restart();
+                running = true;
+                two.bind('update', render).play();
+            } else {
+                this.running = false;
+                two.unbind('update');
+                render();
+                two.update();
+            }
+        }
+
+        function redraw() {
+            if (!this.animate) {
+                render();
+                two.update();
+            } else if (!this.running) {
+                running = true;
+                two.bind('update', render).play();
+            }
+        }
+
+        function redrawCallback() {
+            g.consolidate();
+            restart();
+            redraw();
+        }
+
+        function handleLeftOscillatorUpdate(v) {
+            g.left.consolidate();
+            g.left.makeTwoObjects(two, t);
+            redrawCallback();
+        }
+
+        function handleRightOscillatorUpdate(v) {
+            g.right.consolidate();
+            g.right.makeTwoObjects(two, t);
+            redrawCallback();
+        }
+
+        function handleArmUpdate() {
+            redrawCallback();
+        }
+
+        gui.onAnimate(handleAnimate);
+        gui.onArmUpdate(handleArmUpdate);
+        gui.onLeftOscillatorUpdate(handleLeftOscillatorUpdate);
+        gui.onRightOscillatorUpdate(handleRightOscillatorUpdate);
+
+        gui.onArmChange(handleArmUpdate, redrawCallback);
+        gui.onLeftOscillatorChange(handleLeftOscillatorUpdate, redrawCallback);
+        gui.onRightOscillatorChange(handleRightOscillatorUpdate, redrawCallback);
+
+        render();
+        two.update();
+    </script>
+</div>
+</body>
+</html>
