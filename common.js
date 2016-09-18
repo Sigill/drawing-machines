@@ -102,16 +102,18 @@ function drawPath(ctx, points, n, center) {
         return;
     }
 
+    var lastPoint = Math.min(n, points.length);
+
     ctx.beginPath();
 
     if (center == undefined) {
         ctx.moveTo(points[0].x, points[0].y);
-        for(var i = 1; i < Math.min(n, points.length); ++i) {
+        for(var i = 1; i < lastPoint; ++i) {
             ctx.lineTo(points[i].x, points[i].y);
         }
     } else {
         ctx.moveTo(points[0].x + center.x, points[0].y + center.y);
-        for(var i = 1; i < Math.min(n, points.length); ++i) {
+        for(var i = 1; i < lastPoint; ++i) {
             ctx.lineTo(points[i].x + center.x, points[i].y + center.y);
         }
     }

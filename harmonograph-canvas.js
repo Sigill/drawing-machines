@@ -103,7 +103,7 @@ var h = new CanvasHarmonograph('c');
 
 var gui = new DatGuiHarmonographGui(h);
 
-function handleanimate(value) {
+function handleAnimate(value) {
     h.animate = value;
     if (value) {
         h.restart();
@@ -113,4 +113,21 @@ function handleanimate(value) {
     }
 }
 
-gui.onAnimate(handleanimate);
+function handleSpeedChange(value) {
+    h.PPS = value;
+}
+
+function redrawCallback() {
+    h.consolidate();
+    h.restart();
+    h.redraw();
+}
+
+gui.onAnimate(handleAnimate);
+gui.onSpeedChange(handleSpeedChange);
+
+gui.onXPendulumUpdate(redrawCallback);
+gui.onYPendulumUpdate(redrawCallback);
+
+gui.onBoardChange(redrawCallback, redrawCallback);
+gui.onBoardUpdate(redrawCallback);
