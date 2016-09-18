@@ -1,24 +1,5 @@
 "use strict";
 
-function drawPath(ctx, points, n) {
-    if (points.length < 2) {
-        return;
-    }
-
-    ctx.beginPath();
-    ctx.moveTo(points[0].x, points[0].y);
-
-    for(var i = 1; i < Math.min(n, points.length); ++i) {
-        ctx.lineTo(points[i].x, points[i].y);
-    }
-
-    if (n == points.length) {
-        ctx.closePath();
-    }
-
-    ctx.stroke();
-}
-
 Oscillator.prototype.draw = function(ctx, t) {};
 
 Epitrochoide.prototype.draw = function(ctx, t) {
@@ -67,10 +48,10 @@ Hypotrochoide.prototype.draw = function(ctx, t) {
     var cx = this.position.x, cy = this.position.y;
     ctx.beginPath();
     ctx.arc(cx, cy, this.R, 2 * Math.PI, false);
-    ctx.moveTo(this.position.x-4, this.position.y);
-    ctx.lineTo(this.position.x+4, this.position.y);
-    ctx.moveTo(this.position.x, this.position.y-4);
-    ctx.lineTo(this.position.x, this.position.y+4);
+    ctx.moveTo(this.position.x-3, this.position.y+0.5);
+    ctx.lineTo(this.position.x+4, this.position.y+0.5);
+    ctx.moveTo(this.position.x+0.5, this.position.y-3);
+    ctx.lineTo(this.position.x+0.5, this.position.y+4);
     ctx.stroke();
 
 
@@ -273,7 +254,7 @@ function handleanimate(value) {
         g.restart();
         g.redraw();
     } else {
-        this.running = false;
+        g.running = false;
     }
 }
 
