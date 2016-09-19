@@ -41,13 +41,15 @@ function DatGuiHarmonographGui(harmonograph) {
     this.params = {
         'animate': false,
         'boardType':  'Swinging',
-        'speed': 120
+        'speed': 120,
+        'precision': 1,
     };
 
     this.gui = new dat.GUI({width: 300});
 
-    this.animateController = this.gui.add(this.params, 'animate');
-    this.speedController   = this.gui.add(this.params, 'speed');
+    this.animateController   = this.gui.add(this.params, 'animate');
+    this.speedController     = this.gui.add(this.params, 'speed');
+    this.precisionController = this.gui.add(this.params, 'precision');
 
     this.xPendulumFolder = this.gui.addFolder('X Pendulum');
     this.yPendulumFolder = this.gui.addFolder('Y Pendulum');
@@ -56,7 +58,7 @@ function DatGuiHarmonographGui(harmonograph) {
     this.harmonograph.x.addControllers(this.xPendulumFolder);
     this.harmonograph.y.addControllers(this.yPendulumFolder);
 
-    this.boardController  = this.boardFolder.add(this.params, 'boardType', this.BoardTypes).name("Type");
+    this.boardController = this.boardFolder.add(this.params, 'boardType', this.BoardTypes).name("Type");
     this.harmonograph.board.addControllers(this.boardFolder);
 
     this.xPendulumFolder.open();
@@ -70,6 +72,10 @@ DatGuiHarmonographGui.prototype.onAnimate = function(callback) {
 
 DatGuiHarmonographGui.prototype.onSpeedChange = function(callback) {
     gui.speedController.onFinishChange(callback);
+};
+
+DatGuiHarmonographGui.prototype.onPrecisionChange = function(callback) {
+    gui.precisionController.onFinishChange(callback);
 };
 
 

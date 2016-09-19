@@ -113,18 +113,24 @@ function handleAnimate(value) {
     }
 }
 
-function handleSpeedChange(value) {
-    h.PPS = value;
-}
-
 function redrawCallback() {
     h.consolidate();
     h.restart();
     h.redraw();
 }
 
+function handleSpeedChange(value) {
+    h.PPS = value;
+}
+
+function handlePrecisionChange(value) {
+    h.setPrecision(value);
+    redrawCallback();
+}
+
 gui.onAnimate(handleAnimate);
 gui.onSpeedChange(handleSpeedChange);
+gui.onPrecisionChange(handlePrecisionChange);
 
 gui.onXPendulumUpdate(redrawCallback);
 gui.onYPendulumUpdate(redrawCallback);
