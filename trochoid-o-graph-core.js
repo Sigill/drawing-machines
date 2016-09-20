@@ -31,9 +31,6 @@ Oscillator.prototype.theta = function(t) {
     return t * 2 * Math.PI / this._period + this.phase1;
 };
 
-Oscillator.prototype.maxRadius = function() {};
-Oscillator.prototype.at = function(t) {};
-
 Oscillator.prototype.period = function() {
     if(this._r == 0) {
         return Math.abs(this._period);
@@ -42,13 +39,12 @@ Oscillator.prototype.period = function() {
     }
 };
 
-var Epitrochoide = function(position, scale, R, r, d, period, phase1, phase2) {
+function Epitrochoide(position, scale, R, r, d, period, phase1, phase2) {
     Oscillator.call(this, position, scale, R, r, d, period, phase1, phase2);
-};
+}
 
 Epitrochoide.prototype = Object.create(Oscillator.prototype);
-Epitrochoide.prototype.constructor = Oscillator;
-Epitrochoide.prototype.period = Oscillator.prototype.period;
+Epitrochoide.prototype.constructor = Epitrochoide;
 
 
 Epitrochoide.prototype.at = function(t) {
@@ -75,14 +71,12 @@ Epitrochoide.prototype.maxRadius = function() {
     }
 };
 
-var Hypotrochoide = function(position, scale, R, r, d, period, phase1, phase2) {
+function Hypotrochoide(position, scale, R, r, d, period, phase1, phase2) {
   Oscillator.call(this, position, scale, R, r, d, period, phase1, phase2);
-};
+}
 
 Hypotrochoide.prototype = Object.create(Oscillator.prototype);
-Hypotrochoide.prototype.constructor = Oscillator;
-Hypotrochoide.prototype.period = Oscillator.prototype.period;
-
+Hypotrochoide.prototype.constructor = Hypotrochoide;
 
 Hypotrochoide.prototype.at = function(t) {
     var theta = this.theta(t);
@@ -108,19 +102,11 @@ Hypotrochoide.prototype.maxRadius = function() {
     }
 };
 
-function Arm() {};
-
-Arm.prototype.at = function(leftHandle, rightHandle) {};
-Arm.prototype.scaleToMinimumSize = function(size) {};
-
 function SimpleArticulatedArm(l, r) {
     this.l = l;
     this.r = r;
     this.minimumSize = 0;
-};
-
-SimpleArticulatedArm.prototype = Object.create(Arm.prototype);
-SimpleArticulatedArm.prototype.constructor = Arm;
+}
 
 SimpleArticulatedArm.prototype.at = function(leftHandle, rightHandle) {
     var intersections = circleIntersections(leftHandle.x, leftHandle.y, this.l, rightHandle.x, rightHandle.y, this.r);
@@ -147,10 +133,7 @@ function Pantograph(l1, r1, l2, r2, l3, r3) {
     this.r2 = r2;
     this.l3 = l3;
     this.r3 = r3;
-};
-
-Pantograph.prototype = Object.create(Arm.prototype);
-Pantograph.prototype.constructor = Arm;
+}
 
 Pantograph.prototype.at = function(leftHandle, rightHandle) {
     var intersections = circleIntersections(leftHandle.x, leftHandle.y, this.l1, rightHandle.x, rightHandle.y, this.r1);

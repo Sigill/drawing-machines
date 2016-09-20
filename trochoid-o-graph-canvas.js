@@ -1,7 +1,5 @@
 "use strict";
 
-Oscillator.prototype.draw = function(ctx, t) {};
-
 Epitrochoide.prototype.draw = function(ctx, t) {
     var theta = this.theta(t);
     var cx = this.position.x, cy = this.position.y;
@@ -84,8 +82,6 @@ Hypotrochoide.prototype.draw = function(ctx, t) {
     }
 };
 
-
-Arm.prototype.draw = function(ctx, leftHandle, rightHandle) {};
 
 SimpleArticulatedArm.prototype.draw = function(ctx, leftHandle, rightHandle) {
     var intersections = circleIntersections(leftHandle.x, leftHandle.y, this.l, rightHandle.x, rightHandle.y, this.r);

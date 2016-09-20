@@ -14,8 +14,6 @@ Oscillator.prototype.addControllers = function(gui) {
     ];
 };
 
-Epitrochoide.prototype.addControllers = Oscillator.prototype.addControllers;
-Hypotrochoide.prototype.addControllers = Oscillator.prototype.addControllers;
 
 SimpleArticulatedArm.prototype.addControllers = function(gui) {
     this.controllers = [
