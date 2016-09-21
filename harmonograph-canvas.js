@@ -128,9 +128,21 @@ function handlePrecisionChange(value) {
     redrawCallback();
 }
 
+function handleTermChange(value) {
+    h.setTerm(value);
+    redrawCallback();
+}
+
+function handleDamperChange(value) {
+    h.setDamper(value);
+    redrawCallback();
+}
+
 gui.onAnimate(handleAnimate);
 gui.onSpeedChange(handleSpeedChange);
 gui.onPrecisionChange(handlePrecisionChange);
+gui.onDamperTypeChange(handleDamperChange);
+gui.onTermChange(handleTermChange);
 
 gui.onXPendulumUpdate(redrawCallback);
 gui.onYPendulumUpdate(redrawCallback);

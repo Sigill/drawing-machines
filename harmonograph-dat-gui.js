@@ -5,7 +5,6 @@ Pendulum.prototype.addControllers = function(gui) {
         gui.add(this, 'period').name("Period"),
         gui.add(this, 'phase').min(0).max(2 * Math.PI).name("Phase"),
         gui.add(this, 'amplitude').min(0).name("Amplitude"),
-        gui.add(this, 'damping').min(0).name("Damping"),
     ];
 };
 
@@ -24,25 +23,26 @@ SwingingBoard.prototype.addControllers = function(gui) {
         gui.add(this.x, 'period').name("Period X"),
         gui.add(this.x, 'phase').min(0).max(2 * Math.PI).name("Phase X"),
         gui.add(this.x, 'amplitude').min(0).name("Amplitude X"),
-        gui.add(this.x, 'damping').min(0).name("Damping X"),
 
         gui.add(this.y, 'period').name("Period Y"),
         gui.add(this.y, 'phase').min(0).max(2 * Math.PI).name("Phase Y"),
         gui.add(this.y, 'amplitude').min(0).name("Amplitude Y"),
-        gui.add(this.y, 'damping').min(0).name("Damping Y")
     ];
 };
 
 function DatGuiHarmonographGui(harmonograph) {
     this.harmonograph = harmonograph;
 
-    this.BoardTypes        = [ 'Static', 'Rotating', 'Swinging' ];
+    this.BoardTypes  = [ 'Static', 'Rotating', 'Swinging' ];
+    this.DamperTypes = ['Linear', 'Exponential'];
 
     this.params = {
         'animate': false,
         'boardType':  'Swinging',
         'speed': 120,
         'precision': 1,
+        'damper': 'Linear',
+        'term': 10000,
     };
 
     this.gui = new dat.GUI({width: 300});
@@ -50,6 +50,8 @@ function DatGuiHarmonographGui(harmonograph) {
     this.animateController   = this.gui.add(this.params, 'animate');
     this.speedController     = this.gui.add(this.params, 'speed');
     this.precisionController = this.gui.add(this.params, 'precision');
+    this.damperTypeController = this.gui.add(this.params, 'damper', this.DamperTypes);
+    this.termController     = this.gui.add(this.params, 'term');
 
     this.xPendulumFolder = this.gui.addFolder('X Pendulum');
     this.yPendulumFolder = this.gui.addFolder('Y Pendulum');
@@ -78,6 +80,13 @@ DatGuiHarmonographGui.prototype.onPrecisionChange = function(callback) {
     gui.precisionController.onFinishChange(callback);
 };
 
+DatGuiHarmonographGui.prototype.onTermChange = function(callback) {
+    gui.termController.onFinishChange(callback);
+};
+
+DatGuiHarmonographGui.prototype.onDamperTypeChange = function(callback) {
+    gui.damperTypeController.onFinishChange(callback);
+};
 
 DatGuiHarmonographGui.prototype.onXPendulumUpdate = function(callback) {
     for (var c of this.harmonograph.x.controllers) {
