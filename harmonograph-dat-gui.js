@@ -103,18 +103,12 @@ DatGuiHarmonographGui.prototype.onYPendulumUpdate = function(callback) {
 
 DatGuiHarmonographGui.prototype.onBoardChange = function(onBoardUpdateCallback, redrawCallback) {
     var that = this;
-    that.boardController.onFinishChange(function(value) {
+    that.boardController.onFinishChange(function(boardType) {
         for (var c of that.harmonograph.board.controllers) {
             that.boardFolder.remove(c);
         }
 
-        if(value == 'Static') {
-            that.harmonograph.board = new StaticBoard();
-        } else if(value == 'Rotating') {
-            that.harmonograph.board = new RotatingBoard(10);
-        } else if(value == 'Swinging') {
-            that.harmonograph.board = new SwingingBoard(10, 10, 0, 0, 100, 100, 0.0001, 0.0001);
-        }
+        that.harmonograph.setBoard(boardType);
 
         that.harmonograph.board.addControllers(that.boardFolder);
         that.onBoardUpdate(onBoardUpdateCallback);

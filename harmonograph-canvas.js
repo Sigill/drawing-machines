@@ -28,19 +28,20 @@ CanvasHarmonograph.prototype.resizeCanvas = function() {
 CanvasHarmonograph.prototype.update = function(time) {
     stats.begin();
 
-    var interval = (time - this.lastUpdateTime);
-
     if (this.animate) {
-        var step = this.PPS * interval / 1000 + this.stepRemainder;
-        var stepCount = Math.floor(step);
-        this.stepRemainder = step - stepCount;
+        var interval = (time - this.lastUpdateTime);
+        var pointsToDrawF = this.PPS * this.precision * interval / 1000 + this.pointCountRemainder;
+        var pointsToDraw = Math.floor(pointsToDrawF);
+        this.pointCountRemainder = pointsToDrawF - pointsToDraw;
 
-        this.t = Math.min(this.t + stepCount, this.points.length);
+        this.lastPoint = Math.min(this.lastPoint + pointsToDraw, this.points.length);
+
+        this.lastUpdateTime = time;
     } else {
-        this.t = this.points.length;
+        this.lastPoint = this.points.length;
     }
 
-    if (this.t == this.p) { this.running = false; }
+    if (this.lastPoint == this.points.length) { this.running = false; }
 
     this.ctx.setTransform(1,0,0,1,0,0);
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -51,10 +52,8 @@ CanvasHarmonograph.prototype.update = function(time) {
     this.ctx.fillStyle = 'green';
     this.ctx.lineWidth = 1;
 
-    var px = this.x.at(this.t);
-    var py = this.y.at(this.t);
-
-    //console.log(this.t + ": " + px);
+    var px = this.x.at(this.lastPoint / this.precision);
+    var py = this.y.at(this.lastPoint / this.precision);
 
     this.ctx.beginPath();
     this.ctx.moveTo(px + 0.5, -this.canvas.height / 2.0);
@@ -64,11 +63,9 @@ CanvasHarmonograph.prototype.update = function(time) {
     this.ctx.lineTo( this.canvas.width / 2.0, py + 0.5);
     this.ctx.stroke()
 
-    this.board.transform(this.t, this.ctx);
+    this.board.transform(this.lastPoint / this.precision, this.ctx);
 
-    drawPath(this.ctx, this.points, this.t);
-
-    this.lastUpdateTime = time;
+    drawPath(this.ctx, this.points, this.lastPoint);
 
     if (this.running) {
         this.animationFrameRequest = window.requestAnimationFrame(this.update.bind(this));
@@ -78,8 +75,8 @@ CanvasHarmonograph.prototype.update = function(time) {
 }
 
 CanvasHarmonograph.prototype.restart = function() {
-    this.t = 0;
-    this.stepRemainder = 0;
+    this.lastPoint = 0;
+    this.pointCountRemainder = 0;
     this.lastUpdateTime = performance.now();
 };
 
@@ -114,6 +111,7 @@ function handleAnimate(value) {
 }
 
 function redrawCallback() {
+    h.configure();
     h.consolidate();
     h.restart();
     h.redraw();
