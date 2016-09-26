@@ -30,13 +30,12 @@ CanvasHarmonograph.prototype.update = function(time) {
 
     if (this.animate) {
         var interval = (time - this.lastUpdateTime);
-        var pointsToDrawF = this.PPS * this.precision * interval / 1000 + this.pointCountRemainder;
-        var pointsToDraw = Math.floor(pointsToDrawF);
-        this.pointCountRemainder = pointsToDrawF - pointsToDraw;
+        var pointsToDraw = Math.floor(this.PPS * this.precision * interval / 1000);
 
-        this.lastPoint = Math.min(this.lastPoint + pointsToDraw, this.points.length - 1);
-
-        this.lastUpdateTime = time;
+        if (pointsToDraw >= 1) {
+            this.lastUpdateTime = time;
+            this.lastPoint = Math.min(this.lastPoint + pointsToDraw, this.points.length - 1);
+        }
     } else {
         this.lastPoint = this.points.length - 1;
     }
