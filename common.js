@@ -97,28 +97,21 @@ function circleIntersections(x1, y1, r1, x2, y2, r2) {
     return points;
 };
 
-function drawPath(ctx, points, n, center) {
-    if (points.length < 2) {
+function drawPath(ctx, points, upto, closeWhenComplete) {
+    if (points.length == 0 || upto == 0) {
         return;
     }
 
-    var lastPoint = Math.min(n, points.length);
+    var lastPoint = Math.min(upto, points.length);
 
     ctx.beginPath();
 
-    if (center == undefined) {
-        ctx.moveTo(points[0].x, points[0].y);
-        for(var i = 1; i < lastPoint; ++i) {
-            ctx.lineTo(points[i].x, points[i].y);
-        }
-    } else {
-        ctx.moveTo(points[0].x + center.x, points[0].y + center.y);
-        for(var i = 1; i < lastPoint; ++i) {
-            ctx.lineTo(points[i].x + center.x, points[i].y + center.y);
-        }
+    ctx.moveTo(points[0].x, points[0].y);
+    for(var i = 1; i <= lastPoint; ++i) {
+        ctx.lineTo(points[i].x, points[i].y);
     }
 
-    if (n == points.length) {
+    if (closeWhenComplete && upto == points.length - 1) {
         ctx.closePath();
     }
 

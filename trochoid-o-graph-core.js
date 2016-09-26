@@ -189,7 +189,7 @@ OscillatingDrawingMachine.prototype.consolidate = function() {
         console.log(this.p);
 
         this.points.length = 0;
-        for(var t = 0; t < this.p; ++t) {
+        for(var t = 0; t <= this.p; ++t) {
             this.points.push(this.arm.at(this.left.at(t), this.right.at(t)));
         }
     } catch (e) {

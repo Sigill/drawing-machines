@@ -121,8 +121,8 @@ Harmonograph.prototype.consolidate = function() {
 
         this.points.length = 0;
 
-        var nbPoints = Math.floor(this.term * this.precision);
-        for(var i = 0; i < nbPoints; ++i) {
+        var lastPoint = Math.floor(this.term * this.precision);
+        for(var i = 0; i <= lastPoint; ++i) {
             var t = i / this.precision;
             this.points.push(this.board.project(new Vector(this.x.at(t), this.y.at(t)), t));
         }

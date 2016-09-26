@@ -168,12 +168,12 @@ CanvasOscillatingDrawingMachine.prototype.update = function(time) {
         var stepCount = Math.floor(step);
         this.stepRemainder = step - stepCount;
 
-        this.t = Math.min(this.t + stepCount, this.points.length);
+        this.t = Math.min(this.t + stepCount, this.points.length - 1);
     } else {
-        this.t = this.points.length;
+        this.t = this.points.length - 1;
     }
 
-    if (this.t == this.p) { this.running = false; }
+    if (this.t == this.points.length - 1) { this.running = false; }
 
     this.ctx.setTransform(1,0,0,1,0,0);
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -187,7 +187,7 @@ CanvasOscillatingDrawingMachine.prototype.update = function(time) {
     this.right.draw(this.ctx, this.t);
     this.arm.draw(this.ctx, this.left.at(this.t), this.right.at(this.t));
 
-    drawPath(this.ctx, this.points, this.t);
+    drawPath(this.ctx, this.points, this.t, true);
 
     this.lastUpdateTime = time;
 

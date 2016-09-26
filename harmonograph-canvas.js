@@ -34,14 +34,14 @@ CanvasHarmonograph.prototype.update = function(time) {
         var pointsToDraw = Math.floor(pointsToDrawF);
         this.pointCountRemainder = pointsToDrawF - pointsToDraw;
 
-        this.lastPoint = Math.min(this.lastPoint + pointsToDraw, this.points.length);
+        this.lastPoint = Math.min(this.lastPoint + pointsToDraw, this.points.length - 1);
 
         this.lastUpdateTime = time;
     } else {
-        this.lastPoint = this.points.length;
+        this.lastPoint = this.points.length - 1;
     }
 
-    if (this.lastPoint == this.points.length) { this.running = false; }
+    if (this.lastPoint == this.points.length - 1) { this.running = false; }
 
     this.ctx.setTransform(1,0,0,1,0,0);
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -65,7 +65,7 @@ CanvasHarmonograph.prototype.update = function(time) {
 
     this.board.transform(this.lastPoint / this.precision, this.ctx);
 
-    drawPath(this.ctx, this.points, this.lastPoint);
+    drawPath(this.ctx, this.points, this.lastPoint, false);
 
     if (this.running) {
         this.animationFrameRequest = window.requestAnimationFrame(this.update.bind(this));
