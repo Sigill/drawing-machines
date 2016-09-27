@@ -243,7 +243,7 @@ function handleRightOscillatorUpdate(v) {
     g.redraw();
 }
 
-function handleanimate(value) {
+function handleAnimate(value) {
     g.animate = value;
     if (value) {
         g.restart();
@@ -253,7 +253,12 @@ function handleanimate(value) {
     }
 }
 
-gui.onAnimate(handleanimate);
+function handleSpeedChange(value) {
+    g.PPS = value;
+}
+
+gui.onAnimate(handleAnimate);
+gui.onSpeedChange(handleSpeedChange);
 
 function redrawCallback() {
     g.consolidate();
