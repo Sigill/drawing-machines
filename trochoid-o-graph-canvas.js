@@ -139,7 +139,7 @@ function CanvasOscillatingDrawingMachine(canvasID) {
     this.canvas    = document.getElementById(canvasID);
     this.container = this.canvas.parentNode;
     this.ctx       = this.canvas.getContext('2d');
-    this.PPS       = 120;
+    this.speed     = 120;
     this.animate   = false;
     this.running   = false;
     this.restart();
@@ -166,7 +166,7 @@ CanvasOscillatingDrawingMachine.prototype.update = function(time) {
     var interval = (time - this.lastUpdateTime);
 
     if (this.animate) {
-        var step = Math.floor(this.PPS * interval / 1000);
+        var step = Math.floor(this.speed * interval / 1000);
 
         if (step >= 1) {
             this.lastUpdateTime = time;
@@ -242,10 +242,6 @@ CanvasOscillatingDrawingMachine.prototype.handleAnimate = function(value) {
     } else {
         this.running = false;
     }
-};
-
-CanvasOscillatingDrawingMachine.prototype.handleSpeedChange = function(value) {
-    this.PPS = value;
 };
 
 CanvasOscillatingDrawingMachine.prototype.redrawCallback = function() {

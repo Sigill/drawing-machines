@@ -50,7 +50,7 @@ function DatGuiOscillatingDrawingMachineGui(machine) {
     this.gui = new dat.GUI({width: 300});
 
     this.animateController = this.gui.add(this.params, 'animate');
-    this.speedController   = this.gui.add(this.params, 'speed');
+    this.speedController   = this.gui.add(this.machine, 'speed');
 
     this.armFolder      = this.gui.addFolder('Arms');
     this.leftOscFolder  = this.gui.addFolder('Left oscillator');
@@ -71,10 +71,6 @@ function DatGuiOscillatingDrawingMachineGui(machine) {
 
 DatGuiOscillatingDrawingMachineGui.prototype.onAnimate = function(callback) {
     gui.animateController.onFinishChange(callback);
-};
-
-DatGuiOscillatingDrawingMachineGui.prototype.onSpeedChange = function(callback) {
-    gui.speedController.onFinishChange(callback);
 };
 
 DatGuiOscillatingDrawingMachineGui.prototype.onArmChange = function(onArmUpdateCallback, redrawCallback) {

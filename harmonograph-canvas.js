@@ -6,7 +6,7 @@ function CanvasHarmonograph(canvasID) {
     this.canvas    = document.getElementById(canvasID);
     this.container = this.canvas.parentNode;
     this.ctx       = this.canvas.getContext('2d');
-    this.PPS       = 120;
+    this.speed     = 120;
     this.animate   = false;
     this.running   = false;
     this.restart();
@@ -32,7 +32,7 @@ CanvasHarmonograph.prototype.update = function(time) {
 
     if (this.animate) {
         var interval = (time - this.lastUpdateTime);
-        var pointsToDraw = Math.floor(this.PPS * this.precision * interval / 1000);
+        var pointsToDraw = Math.floor(this.speed * this.precision * interval / 1000);
 
         if (pointsToDraw >= 1) {
             this.lastUpdateTime = time;
@@ -105,10 +105,6 @@ CanvasHarmonograph.prototype.redrawCallback = function() {
     this.consolidate();
     this.restart();
     this.redraw();
-};
-
-CanvasHarmonograph.prototype.handleSpeedChange = function(value) {
-    this.PPS = value;
 };
 
 CanvasHarmonograph.prototype.handlePrecisionChange = function(value) {

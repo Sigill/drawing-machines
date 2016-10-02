@@ -39,7 +39,6 @@ function DatGuiHarmonographGui(harmonograph) {
     this.params = {
         'animate': false,
         'boardType':  'Swinging',
-        'speed': 120,
         'precision': 1,
         'damper': 'Linear',
         'term': 10000,
@@ -48,7 +47,7 @@ function DatGuiHarmonographGui(harmonograph) {
     this.gui = new dat.GUI({width: 300});
 
     this.animateController   = this.gui.add(this.params, 'animate');
-    this.speedController     = this.gui.add(this.params, 'speed');
+    this.speedController     = this.gui.add(this.harmonograph, 'speed');
     this.precisionController = this.gui.add(this.params, 'precision');
     this.damperTypeController = this.gui.add(this.params, 'damper', this.DamperTypes);
     this.termController     = this.gui.add(this.params, 'term');
@@ -70,10 +69,6 @@ function DatGuiHarmonographGui(harmonograph) {
 
 DatGuiHarmonographGui.prototype.onAnimate = function(callback) {
     this.animateController.onFinishChange(callback);
-};
-
-DatGuiHarmonographGui.prototype.onSpeedChange = function(callback) {
-    this.speedController.onFinishChange(callback);
 };
 
 DatGuiHarmonographGui.prototype.onPrecisionChange = function(callback) {
