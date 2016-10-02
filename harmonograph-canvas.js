@@ -11,6 +11,8 @@ function CanvasHarmonograph(canvasID) {
     this.running   = false;
     this.restart();
 
+    this.updateObservable = new Observable();
+
     window.addEventListener('resize', this.resizeCanvas.bind(this), false);
 
     this.resizeCanvas();
@@ -26,7 +28,7 @@ CanvasHarmonograph.prototype.resizeCanvas = function() {
 };
 
 CanvasHarmonograph.prototype.update = function(time) {
-    stats.begin();
+    this.updateObservable.notifyObservers('beginUpdate');
 
     if (this.animate) {
         var interval = (time - this.lastUpdateTime);
@@ -70,8 +72,8 @@ CanvasHarmonograph.prototype.update = function(time) {
         this.animationFrameRequest = window.requestAnimationFrame(this.update.bind(this));
     }
 
-    stats.end();
-}
+    this.updateObservable.notifyObservers('endUpdate');
+};
 
 CanvasHarmonograph.prototype.restart = function() {
     this.lastPoint = 0;
@@ -88,61 +90,38 @@ CanvasHarmonograph.prototype.redraw = function() {
     }
 };
 
-var stats = new Stats();
-stats.setMode(0); // 0: fps, 1: ms
-stats.domElement.style.position = 'absolute';
-stats.domElement.style.left = '0px';
-stats.domElement.style.bottom = '0px';
-document.body.appendChild( stats.domElement );
-
-var h = new CanvasHarmonograph('c');
-
-var gui = new DatGuiHarmonographGui(h);
-
-function handleAnimate(value) {
-    h.animate = value;
+CanvasHarmonograph.prototype.handleAnimate = function(value) {
+    this.animate = value;
     if (value) {
-        h.restart();
-        h.redraw();
+        this.restart();
+        this.redraw();
     } else {
-        h.running = false;
+        this.running = false;
     }
-}
+};
 
-function redrawCallback() {
-    h.configure();
-    h.consolidate();
-    h.restart();
-    h.redraw();
-}
+CanvasHarmonograph.prototype.redrawCallback = function() {
+    this.configure();
+    this.consolidate();
+    this.restart();
+    this.redraw();
+};
 
-function handleSpeedChange(value) {
-    h.PPS = value;
-}
+CanvasHarmonograph.prototype.handleSpeedChange = function(value) {
+    this.PPS = value;
+};
 
-function handlePrecisionChange(value) {
-    h.setPrecision(value);
-    redrawCallback();
-}
+CanvasHarmonograph.prototype.handlePrecisionChange = function(value) {
+    this.setPrecision(value);
+    this.redrawCallback();
+};
 
-function handleTermChange(value) {
-    h.setTerm(value);
-    redrawCallback();
-}
+CanvasHarmonograph.prototype.handleTermChange = function(value) {
+    this.setTerm(value);
+    this.redrawCallback();
+};
 
-function handleDamperChange(value) {
-    h.setDamper(value);
-    redrawCallback();
-}
-
-gui.onAnimate(handleAnimate);
-gui.onSpeedChange(handleSpeedChange);
-gui.onPrecisionChange(handlePrecisionChange);
-gui.onDamperTypeChange(handleDamperChange);
-gui.onTermChange(handleTermChange);
-
-gui.onXPendulumUpdate(redrawCallback);
-gui.onYPendulumUpdate(redrawCallback);
-
-gui.onBoardChange(redrawCallback, redrawCallback);
-gui.onBoardUpdate(redrawCallback);
+CanvasHarmonograph.prototype.handleDamperChange = function(value) {
+    this.setDamper(value);
+    this.redrawCallback();
+};

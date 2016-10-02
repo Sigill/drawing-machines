@@ -144,6 +144,8 @@ function CanvasOscillatingDrawingMachine(canvasID) {
     this.running   = false;
     this.restart();
 
+    this.updateObservable = new Observable();
+
     window.addEventListener('resize', this.resizeCanvas.bind(this), false);
 
     this.resizeCanvas();
@@ -159,7 +161,7 @@ CanvasOscillatingDrawingMachine.prototype.resizeCanvas = function() {
 };
 
 CanvasOscillatingDrawingMachine.prototype.update = function(time) {
-    stats.begin();
+    this.updateObservable.notifyObservers('beginUpdate');
 
     var interval = (time - this.lastUpdateTime);
 
@@ -194,8 +196,8 @@ CanvasOscillatingDrawingMachine.prototype.update = function(time) {
         this.animationFrameRequest = window.requestAnimationFrame(this.update.bind(this));
     }
 
-    stats.end();
-}
+    this.updateObservable.notifyObservers('endUpdate');
+};
 
 CanvasOscillatingDrawingMachine.prototype.restart = function() {
     this.t = 0;
@@ -212,64 +214,42 @@ CanvasOscillatingDrawingMachine.prototype.redraw = function() {
     }
 };
 
-var stats = new Stats();
-stats.setMode(0); // 0: fps, 1: ms
-stats.domElement.style.position = 'absolute';
-stats.domElement.style.left = '0px';
-stats.domElement.style.bottom = '0px';
-document.body.appendChild( stats.domElement );
+CanvasOscillatingDrawingMachine.prototype.handleArmUpdate = function() {
+    this.consolidate();
+    this.restart();
+    this.redraw();
+};
 
-var g = new CanvasOscillatingDrawingMachine('c');
+CanvasOscillatingDrawingMachine.prototype.handleLeftOscillatorUpdate = function(v) {
+    this.left.consolidate();
+    this.consolidate();
+    this.restart();
+    this.redraw();
+};
 
-var gui = new DatGuiOscillatingDrawingMachineGui(g);
+CanvasOscillatingDrawingMachine.prototype.handleRightOscillatorUpdate = function(v) {
+    this.right.consolidate();
+    this.consolidate();
+    this.restart();
+    this.redraw();
+};
 
-function handleArmUpdate() {
-    g.consolidate();
-    g.restart();
-    g.redraw();
-}
-
-function handleLeftOscillatorUpdate(v) {
-    g.left.consolidate();
-    g.consolidate();
-    g.restart();
-    g.redraw();
-}
-
-function handleRightOscillatorUpdate(v) {
-    g.right.consolidate();
-    g.consolidate();
-    g.restart();
-    g.redraw();
-}
-
-function handleAnimate(value) {
-    g.animate = value;
+CanvasOscillatingDrawingMachine.prototype.handleAnimate = function(value) {
+    this.animate = value;
     if (value) {
-        g.restart();
-        g.redraw();
+        this.restart();
+        this.redraw();
     } else {
-        g.running = false;
+        this.running = false;
     }
-}
+};
 
-function handleSpeedChange(value) {
-    g.PPS = value;
-}
+CanvasOscillatingDrawingMachine.prototype.handleSpeedChange = function(value) {
+    this.PPS = value;
+};
 
-gui.onAnimate(handleAnimate);
-gui.onSpeedChange(handleSpeedChange);
-
-function redrawCallback() {
-    g.consolidate();
-    g.restart();
-    g.redraw();
-}
-
-gui.onArmUpdate(handleArmUpdate);
-gui.onLeftOscillatorUpdate(handleLeftOscillatorUpdate);
-gui.onRightOscillatorUpdate(handleRightOscillatorUpdate);
-
-gui.onArmChange(handleArmUpdate, redrawCallback);
-gui.onLeftOscillatorChange(handleLeftOscillatorUpdate, redrawCallback);
-gui.onRightOscillatorChange(handleRightOscillatorUpdate, redrawCallback);
+CanvasOscillatingDrawingMachine.prototype.redrawCallback = function() {
+    this.consolidate();
+    this.restart();
+    this.redraw();
+};

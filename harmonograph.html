@@ -23,11 +23,44 @@
         <canvas id="c"></canvas>
     </div>
     <script src="stats.min.js"></script>
+    <script src="observable.js"></script>
     <script src="requestAnimationFrame.js"></script>
     <script src="dat.gui.min.js"></script>
     <script src="common.js"></script>
     <script src="harmonograph-core.js"></script>
     <script src="harmonograph-dat-gui.js"></script>
     <script src="harmonograph-canvas.js"></script>
+    <script>
+        var h = new CanvasHarmonograph('c');
+
+        var stats = new Stats();
+        stats.setMode(0); // 0: fps, 1: ms
+        stats.domElement.style.position = 'absolute';
+        stats.domElement.style.left = '0px';
+        stats.domElement.style.bottom = '0px';
+        document.body.appendChild( stats.domElement );
+
+        h.updateObservable.addObserver(function(message) {
+            if(message == 'beginUpdate')
+                stats.begin();
+            else if(message == 'endUpdate')
+                stats.end();
+        });
+
+        var gui = new DatGuiHarmonographGui(h);
+
+        gui.onAnimate(h.handleAnimate.bind(h));
+
+        gui.onXPendulumUpdate(h.redrawCallback.bind(h));
+        gui.onYPendulumUpdate(h.redrawCallback.bind(h));
+
+        gui.onBoardChange(h.redrawCallback.bind(h), h.redrawCallback.bind(h));
+        gui.onBoardUpdate(h.redrawCallback.bind(h));
+        gui.onSpeedChange(h.handleSpeedChange.bind(h));
+
+        gui.onPrecisionChange(h.handlePrecisionChange.bind(h));
+        gui.onDamperTypeChange(h.handleDamperChange.bind(h));
+        gui.onTermChange(h.handleTermChange.bind(h));
+    </script>
 </body>
 </html>

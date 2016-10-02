@@ -69,23 +69,23 @@ function DatGuiHarmonographGui(harmonograph) {
 }
 
 DatGuiHarmonographGui.prototype.onAnimate = function(callback) {
-    gui.animateController.onFinishChange(callback);
+    this.animateController.onFinishChange(callback);
 };
 
 DatGuiHarmonographGui.prototype.onSpeedChange = function(callback) {
-    gui.speedController.onFinishChange(callback);
+    this.speedController.onFinishChange(callback);
 };
 
 DatGuiHarmonographGui.prototype.onPrecisionChange = function(callback) {
-    gui.precisionController.onFinishChange(callback);
+    this.precisionController.onFinishChange(callback);
 };
 
 DatGuiHarmonographGui.prototype.onTermChange = function(callback) {
-    gui.termController.onFinishChange(callback);
+    this.termController.onFinishChange(callback);
 };
 
 DatGuiHarmonographGui.prototype.onDamperTypeChange = function(callback) {
-    gui.damperTypeController.onFinishChange(callback);
+    this.damperTypeController.onFinishChange(callback);
 };
 
 DatGuiHarmonographGui.prototype.onXPendulumUpdate = function(callback) {
