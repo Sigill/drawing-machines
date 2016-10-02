@@ -201,7 +201,6 @@ CanvasOscillatingDrawingMachine.prototype.update = function(time) {
 
 CanvasOscillatingDrawingMachine.prototype.restart = function() {
     this.t = 0;
-    this.stepRemainder = 0;
     this.lastUpdateTime = performance.now();
 };
 

@@ -77,7 +77,6 @@ CanvasHarmonograph.prototype.update = function(time) {
 
 CanvasHarmonograph.prototype.restart = function() {
     this.lastPoint = 0;
-    this.pointCountRemainder = 0;
     this.lastUpdateTime = performance.now();
 };
 
