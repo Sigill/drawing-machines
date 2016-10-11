@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Drawing Machines</title>
+    <style>
+        * { margin: 0; padding: 0;}
+
+        body, html { height:100%; }
+
+        #d {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        #c {
+            display: block;
+            background-color: #212121;
+        }
+
+        #ec {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 0;
+        }
+        #em {
+            padding: 2px 5px;
+            color: #eee;
+            font-family: Lucida Grande,sans-serif;
+            font-size: 90%;
+        }
+    </style>
+</head>
+<body>
+    <div id="d">
+        <canvas id="c"></canvas>
+    </div>
+    <div id="ec"><p id="em">Plop</p></div>
+    <script src="stats.min.js"></script>
+    <script src="observable.js"></script>
+    <script src="requestAnimationFrame.js"></script>
+    <script src="dat.gui.js"></script>
+    <script src="common.js"></script>
+    <script src="core.js"></script>
+    <script src="canvas.js"></script>
+    <script src="gui.js"></script>
+    <script>
+        var stats = new Stats();
+        stats.setMode(0); // 0: fps, 1: ms
+        stats.domElement.style.position = 'absolute';
+        stats.domElement.style.left = '0px';
+        stats.domElement.style.bottom = '0px';
+        document.body.appendChild( stats.domElement );
+
+        function notifyStats(message) {
+            if(message == 'beginUpdate')
+                stats.begin();
+            else if(message == 'endUpdate')
+                stats.end();
+        }
+
+        var canvas    = document.getElementById('c');
+        var container = canvas.parentNode;
+        var ctx       = canvas.getContext('2d');
+        var machine   = null;
+
+        function resizeCanvas() {
+            canvas.width  = container.clientWidth;
+            canvas.height = container.clientHeight;
+            if (machine) { machine.redraw(); }
+        }
+
+        window.addEventListener('resize', resizeCanvas, false);
+        resizeCanvas();
+
+        function setMachine(_machine) {
+            console.log("Machine changed");
+
+            if (machine != null) { machine.running = false; }
+
+            var animate = machine == null ? false : machine.animate;
+
+            delete machine;
+
+            machine = _machine;
+            machine.canvas = canvas;
+            machine.ctx = ctx;
+
+            machine.updateObservable.addObserver(notifyStats);
+
+            machine.redraw();
+            machine.handleAnimate(animate);
+        }
+
+        function showMessage(message) {
+            var container = document.getElementById('ec');
+            var paragraph = document.getElementById('em');
+
+            if (message == null) {
+                container.style.display = 'none';
+                em.innerHTML = "";
+            } else {
+                container.style.display = 'block';
+                em.innerHTML = message;
+            }
+        }
+
+        function setSpeed(speed) { machine.speed = speed; }
+        function animate(animate) { machine.handleAnimate(animate); }
+
+        var factory = new CanvasDrawingMachineDatGui(setMachine, setSpeed, animate, showMessage);
+        factory.loadMachineGui('Pintograph');
+    </script>
+</body>
+</html>
