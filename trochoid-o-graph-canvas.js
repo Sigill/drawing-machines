@@ -202,6 +202,7 @@ CanvasOscillatingDrawingMachine.prototype.update = function(time) {
 CanvasOscillatingDrawingMachine.prototype.restart = function() {
     this.t = 0;
     this.lastUpdateTime = performance.now();
+    this.running = false;
 };
 
 CanvasOscillatingDrawingMachine.prototype.redraw = function() {
@@ -214,23 +215,26 @@ CanvasOscillatingDrawingMachine.prototype.redraw = function() {
 };
 
 CanvasOscillatingDrawingMachine.prototype.handleArmUpdate = function() {
-    this.consolidate();
     this.restart();
-    this.redraw();
+    if (this.consolidate()) {
+        this.redraw();
+    }
 };
 
 CanvasOscillatingDrawingMachine.prototype.handleLeftOscillatorUpdate = function(v) {
     this.left.consolidate();
-    this.consolidate();
     this.restart();
-    this.redraw();
+    if (this.consolidate()) {
+        this.redraw();
+    }
 };
 
 CanvasOscillatingDrawingMachine.prototype.handleRightOscillatorUpdate = function(v) {
     this.right.consolidate();
-    this.consolidate();
     this.restart();
-    this.redraw();
+    if (this.consolidate()) {
+        this.redraw();
+    }
 };
 
 CanvasOscillatingDrawingMachine.prototype.handleAnimate = function(value) {
@@ -244,7 +248,8 @@ CanvasOscillatingDrawingMachine.prototype.handleAnimate = function(value) {
 };
 
 CanvasOscillatingDrawingMachine.prototype.redrawCallback = function() {
-    this.consolidate();
     this.restart();
-    this.redraw();
+    if (this.consolidate()) {
+        this.redraw();
+    }
 };

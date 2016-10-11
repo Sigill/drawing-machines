@@ -192,8 +192,9 @@ OscillatingDrawingMachine.prototype.consolidate = function() {
         for(var t = 0; t <= this.p; ++t) {
             this.points.push(this.arm.at(this.left.at(t), this.right.at(t)));
         }
+        return true;
     } catch (e) {
         this.points.length = 0;
-        alert("Invalid parameters");
+        return false;
     }
 };

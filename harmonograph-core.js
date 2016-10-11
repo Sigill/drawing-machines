@@ -128,6 +128,5 @@ Harmonograph.prototype.consolidate = function() {
         }
     } catch (e) {
         this.points.length = 0;
-        alert("Invalid parameters");
     }
 };

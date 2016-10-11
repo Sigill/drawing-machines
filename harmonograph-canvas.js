@@ -78,6 +78,7 @@ CanvasHarmonograph.prototype.update = function(time) {
 CanvasHarmonograph.prototype.restart = function() {
     this.lastPoint = 0;
     this.lastUpdateTime = performance.now();
+    this.running = false;
 };
 
 CanvasHarmonograph.prototype.redraw = function() {
@@ -100,9 +101,9 @@ CanvasHarmonograph.prototype.handleAnimate = function(value) {
 };
 
 CanvasHarmonograph.prototype.redrawCallback = function() {
+    this.restart();
     this.configure();
     this.consolidate();
-    this.restart();
     this.redraw();
 };
 
