@@ -3,7 +3,7 @@
 Pendulum.prototype.addControllers = function(gui) {
     this.controllers = [
         gui.add(this, 'period').name("Period"),
-        gui.add(this, 'phase').min(0).max(2 * Math.PI).name("Phase"),
+        gui.add(this, 'phase').min(0).max(2 * Math.PI).step(0.1).name("Phase"),
         gui.add(this, 'amplitude').min(0).name("Amplitude"),
     ];
 };
@@ -21,11 +21,11 @@ RotatingBoard.prototype.addControllers = function(gui) {
 SwingingBoard.prototype.addControllers = function(gui) {
     this.controllers = [
         gui.add(this.x, 'period').name("Period X"),
-        gui.add(this.x, 'phase').min(0).max(2 * Math.PI).name("Phase X"),
+        gui.add(this.x, 'phase').min(0).max(2 * Math.PI).step(0.1).name("Phase X"),
         gui.add(this.x, 'amplitude').min(0).name("Amplitude X"),
 
         gui.add(this.y, 'period').name("Period Y"),
-        gui.add(this.y, 'phase').min(0).max(2 * Math.PI).name("Phase Y"),
+        gui.add(this.y, 'phase').min(0).max(2 * Math.PI).step(0.1).name("Phase Y"),
         gui.add(this.y, 'amplitude').min(0).name("Amplitude Y"),
     ];
 };
@@ -38,7 +38,7 @@ function DatGuiHarmonographGui(harmonograph) {
 
     this.params = {
         'animate': false,
-        'boardType':  'Swinging',
+        'boardType': 'Swinging',
         'precision': 1,
         'damper': 'Linear',
         'term': 10000,
