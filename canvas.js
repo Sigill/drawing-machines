@@ -252,9 +252,19 @@ CanvasHarmonograph.prototype.draw = function(time) {
     this.ctx.translate(this.canvas.width / 2.0, this.canvas.height / 2.0)
     //this.ctx.translate(0.5, 0.5);
 
+    this.board.transform(this.lastPoint / this.precision, this.ctx);
+
     this.ctx.strokeStyle = 'orangered';
-    this.ctx.fillStyle = 'green';
+    this.ctx.fillStyle = 'orangered';
     this.ctx.lineWidth = 1;
+
+    drawPath(this.ctx, this.points, this.lastPoint, false);
+
+    this.ctx.strokeStyle = 'white';
+    this.ctx.fillStyle = 'white';
+
+    this.ctx.setTransform(1,0,0,1,0,0);
+    this.ctx.translate(this.canvas.width / 2.0, this.canvas.height / 2.0)
 
     var px = this.x.at(this.lastPoint / this.precision);
     var py = this.y.at(this.lastPoint / this.precision);
@@ -263,13 +273,9 @@ CanvasHarmonograph.prototype.draw = function(time) {
     this.ctx.moveTo(px + 0.5, -this.canvas.height / 2.0);
     this.ctx.lineTo(px + 0.5,  this.canvas.height / 2.0);
 
-    this.ctx.moveTo(-this.canvas.width / 2.0, py + 0.5);
-    this.ctx.lineTo( this.canvas.width / 2.0, py + 0.5);
-    this.ctx.stroke()
-
-    this.board.transform(this.lastPoint / this.precision, this.ctx);
-
-    drawPath(this.ctx, this.points, this.lastPoint, false);
+    this.ctx.moveTo(-this.canvas.width / 2.0, py);
+    this.ctx.lineTo( this.canvas.width / 2.0, py);
+    this.ctx.stroke();
 
     if (this.running) {
         this.animationFrameRequest = window.requestAnimationFrame(this.draw.bind(this));
