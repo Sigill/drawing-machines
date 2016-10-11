@@ -1,8 +1,8 @@
-# Trochoid-o-graph
+# Drawing machines
 
-A spirograph inspired experiment.
+Simulations of a Pintograph and an Harmonograph.
 
-Visible at http://sigill.github.io/trochoid-o-graph/.
+Visible at http://sigill.github.io/drawing-machines/.
 
 ## License
 
