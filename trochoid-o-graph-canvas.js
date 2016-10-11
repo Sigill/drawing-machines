@@ -163,9 +163,8 @@ CanvasOscillatingDrawingMachine.prototype.resizeCanvas = function() {
 CanvasOscillatingDrawingMachine.prototype.update = function(time) {
     this.updateObservable.notifyObservers('beginUpdate');
 
-    var interval = (time - this.lastUpdateTime);
-
     if (this.animate) {
+        var interval = (time - this.lastUpdateTime);
         var step = Math.floor(this.speed * interval / 1000);
 
         if (step >= 1) {
