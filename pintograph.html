@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pintograph</title>
+    <style>
+        * { margin: 0; padding: 0;}
+
+        body, html { height:100%; }
+
+        #d {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        #c {
+            display: block;
+            background-color: #212121;
+        }
+    </style>
+</head>
+<body>
+    <div id="d">
+        <canvas id="c"></canvas>
+    </div>
+    <script src="stats.min.js"></script>
+    <script src="observable.js"></script>
+    <script src="requestAnimationFrame.js"></script>
+    <script src="dat.gui.min.js"></script>
+    <script src="common.js"></script>
+    <script src="pintograph-core.js"></script>
+    <script src="pintograph-dat-gui.js"></script>
+    <script src="pintograph-canvas.js"></script>
+    <script>
+        var g = new CanvasOscillatingDrawingMachine('c');
+
+        var stats = new Stats();
+        stats.setMode(0); // 0: fps, 1: ms
+        stats.domElement.style.position = 'absolute';
+        stats.domElement.style.left = '0px';
+        stats.domElement.style.bottom = '0px';
+        document.body.appendChild( stats.domElement );
+
+        g.updateObservable.addObserver(function(message) {
+            if(message == 'beginUpdate')
+                stats.begin();
+            else if(message == 'endUpdate')
+                stats.end();
+        });
+
+        var gui = new DatGuiOscillatingDrawingMachineGui(g);
+
+        gui.onAnimate(g.handleAnimate.bind(g));
+
+        gui.onArmUpdate(g.handleArmUpdate.bind(g));
+        gui.onLeftOscillatorUpdate(g.handleLeftOscillatorUpdate.bind(g));
+        gui.onRightOscillatorUpdate(g.handleRightOscillatorUpdate.bind(g));
+
+        gui.onArmChange(g.handleArmUpdate.bind(g), g.redrawCallback.bind(g));
+        gui.onLeftOscillatorChange(g.handleLeftOscillatorUpdate.bind(g), g.redrawCallback.bind(g));
+        gui.onRightOscillatorChange(g.handleRightOscillatorUpdate.bind(g), g.redrawCallback.bind(g));
+    </script>
+</body>
+</html>
