@@ -44,8 +44,7 @@ function Epitrochoide(position, scale, R, r, d, period, phase1, phase2) {
     Oscillator.call(this, position, scale, R, r, d, period, phase1, phase2);
 }
 
-Epitrochoide.prototype = Object.create(Oscillator.prototype);
-Epitrochoide.prototype.constructor = Epitrochoide;
+Extend(Epitrochoide, Oscillator);
 
 
 Epitrochoide.prototype.at = function(t) {
@@ -77,8 +76,8 @@ function Hypotrochoide(position, scale, R, r, d, period, phase1, phase2) {
   Oscillator.call(this, position, scale, R, r, d, period, phase1, phase2);
 }
 
-Hypotrochoide.prototype = Object.create(Oscillator.prototype);
-Hypotrochoide.prototype.constructor = Hypotrochoide;
+Extend(Hypotrochoide, Oscillator);
+
 
 Hypotrochoide.prototype.at = function(t) {
     var theta = this.theta(t);
