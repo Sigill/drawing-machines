@@ -322,7 +322,7 @@ function HarmonographDatGui(gui, machineChangedCallback) {
         'board':               {}
     };
 
-    this.precisionController   = gui.add(this.parameters, 'precision').name("Precision");
+    this.precisionController   = gui.add(this.parameters, 'precision').min(0).name("Precision");
     this.damperTypeController  = gui.add(this.parameters, 'damperType', this.DamperTypes).name("Damper type");
     this.termController        = gui.add(this.parameters, 'term').min(1).step(1).name("Term");
 
