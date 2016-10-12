@@ -1,5 +1,10 @@
 "use strict";
 
+function Extend(Klass, Base) {
+    Klass.prototype = Object.create(Base.prototype);
+    Klass.prototype.constructor = Klass;
+}
+
 var Vector = function(x, y) {
     this.x = x;
     this.y = y;

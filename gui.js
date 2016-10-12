@@ -1,64 +1,55 @@
 "use strict";
 
-function OscillatorGui(guiFolder, parameters) {
-    this.guiFolder = guiFolder;
-    this.parameters = parameters;
-    this.parameterKeys = ['x', 'y', 'scale', '_R', '_r', '_d', '_period', 'phase1', 'phase2'];
-    this.controllers = [
-        guiFolder.add(parameters, 'x'),
-        guiFolder.add(parameters, 'y'),
-        guiFolder.add(parameters, 'scale').min(0).name("Scale"),
-        guiFolder.add(parameters, '_R').min(1).step(1).name("Main radius"),
-        guiFolder.add(parameters, '_r').min(0).step(1).name("Satellite radius"),
-        guiFolder.add(parameters, '_d').min(0).step(1).name("Dist. to satellite"),
-        guiFolder.add(parameters, '_period').step(1).name("Period (per rev.)"),
-        guiFolder.add(parameters, 'phase1').min(0).max(2 * Math.PI).step(0.1).name("Main phase"),
-        guiFolder.add(parameters, 'phase2').min(0).max(2 * Math.PI).step(0.1).name("Satellite phase")
-    ];
+function GuiObject(guiFolder, parameters, keys, controllers) {
+    this.guiFolder     = guiFolder;
+    this.parameters    = parameters;
+    this.parameterKeys = keys;
+    this.controllers   = controllers;
 }
 
-OscillatorGui.prototype.destroy = function() {
+GuiObject.prototype.destroy = function() {
     for (var c of this.controllers) { this.guiFolder.remove(c); }
     for (var p of this.parameterKeys) { delete this.parameters[p]; }
 };
 
+function OscillatorGui(guiFolder, parameters) {
+    GuiObject.call(this, guiFolder, parameters,
+        [ 'x', 'y', 'scale', '_R', '_r', '_d', '_period', 'phase1', 'phase2' ],
+        [ guiFolder.add(parameters, 'x'),
+          guiFolder.add(parameters, 'y'),
+          guiFolder.add(parameters, 'scale').min(0).name("Scale"),
+          guiFolder.add(parameters, '_R').min(1).step(1).name("Main radius"),
+          guiFolder.add(parameters, '_r').min(0).step(1).name("Satellite radius"),
+          guiFolder.add(parameters, '_d').min(0).step(1).name("Dist. to satellite"),
+          guiFolder.add(parameters, '_period').step(1).name("Period (per rev.)"),
+          guiFolder.add(parameters, 'phase1').min(0).max(2 * Math.PI).step(0.1).name("Main phase"),
+          guiFolder.add(parameters, 'phase2').min(0).max(2 * Math.PI).step(0.1).name("Satellite phase") ]);
+}
+
+Extend(OscillatorGui, GuiObject);
 
 function SimpleArticulatedArmGui(guiFolder, parameters) {
-    this.guiFolder = guiFolder;
-    this.parameters = parameters;
-    this.parameterKeys = ['l', 'r'];
-    this.controllers = [
-        guiFolder.add(parameters, 'l').min(0).name("Left arm"),
-        guiFolder.add(parameters, 'r').min(0).name("Right arm")
-    ];
+    GuiObject.call(this, guiFolder, parameters,
+        [ 'l', 'r' ],
+        [ guiFolder.add(parameters, 'l').min(0).name("Left arm"),
+          guiFolder.add(parameters, 'r').min(0).name("Right arm") ]);
 }
 
-
-SimpleArticulatedArmGui.prototype.destroy = function() {
-    for (var c of this.controllers) { this.guiFolder.remove(c); }
-    for (var p of this.parameterKeys) { delete this.parameters[p]; }
-};
+Extend(SimpleArticulatedArmGui, GuiObject);
 
 
 function PantographGui(guiFolder, parameters) {
-    this.guiFolder = guiFolder;
-    this.parameters = parameters;
-    this.parameterKeys = ['l1', 'r1', 'l2', 'r2', 'l3', 'r3'];
-    this.controllers = [
-        guiFolder.add(parameters, 'l1').min(0).name("Left arm (part 1)"),
-        guiFolder.add(parameters, 'r1').min(0).name("Right arm (part 1)"),
-        guiFolder.add(parameters, 'l2').min(0).name("Left arm (part 2)"),
-        guiFolder.add(parameters, 'r2').min(0).name("Right arm (part 2)"),
-        guiFolder.add(parameters, 'l3').min(0).name("Left arm (part 3)"),
-        guiFolder.add(parameters, 'r3').min(0).name("Right arm (part 3)")
-    ];
+    GuiObject.call(this, guiFolder, parameters,
+        [ 'l1', 'r1', 'l2', 'r2', 'l3', 'r3' ],
+        [ guiFolder.add(parameters, 'l1').min(0).name("Left arm (part 1)"),
+          guiFolder.add(parameters, 'r1').min(0).name("Right arm (part 1)"),
+          guiFolder.add(parameters, 'l2').min(0).name("Left arm (part 2)"),
+          guiFolder.add(parameters, 'r2').min(0).name("Right arm (part 2)"),
+          guiFolder.add(parameters, 'l3').min(0).name("Left arm (part 3)"),
+          guiFolder.add(parameters, 'r3').min(0).name("Right arm (part 3)") ]);
 }
 
-PantographGui.prototype.destroy = function() {
-    for (var c of this.controllers) { this.guiFolder.remove(c); }
-    for (var p of this.parameterKeys) { delete this.parameters[p]; }
-};
-
+Extend(PantographGui, GuiObject);
 
 function CanvasDrawingMachineDatGui(machineChangedCallback, speedChangedCallback, animateCallback, showMessageCallback) {
     this.machineChangedCallback = machineChangedCallback;
@@ -103,7 +94,7 @@ CanvasDrawingMachineDatGui.prototype.onMachineChange = function() {
         } catch (e) {
             this.showMessageCallback(e.message);
         }
-    } else if (this.parameters['machineType'] == this.MachinesTypes[1]) { // HArmonograph
+    } else if (this.parameters['machineType'] == this.MachinesTypes[1]) { // Harmonograph
         this.machineChangedCallback(new CanvasHarmonograph(this.factory.parameters, this.parameters['speed']));
     }
 };
@@ -273,64 +264,45 @@ PintographDatGui.prototype.loadRightOscillatorGui = function(type) {
 
 
 function StaticBoardGui(guiFolder, parameters) {
-    this.guiFolder = guiFolder;
-    this.parameters = parameters;
-    this.parameterKeys = [];
-    this.controllers = [];
+    GuiObject.call(this, guiFolder, parameters, [], []);
 }
 
-StaticBoardGui.prototype.destroy = function() {};
+Extend(StaticBoardGui, GuiObject);
 
 
 function RotatingBoardGui(guiFolder, parameters) {
-    this.guiFolder = guiFolder;
-    this.parameters = parameters;
-    this.parameterKeys = ['period'];
-    this.controllers = [ guiFolder.add(parameters, 'period').name("Period") ];
+    GuiObject.call(this, guiFolder, parameters,
+        [ 'period' ],
+        [ guiFolder.add(parameters, 'period').name("Period") ]);
 }
 
-RotatingBoardGui.prototype.destroy = function() {
-    for (var c of this.controllers) { this.guiFolder.remove(c); }
-    for (var p of this.parameterKeys) { delete this.parameters[p]; }
-};
+Extend(RotatingBoardGui, GuiObject);
 
 
 function SwingingBoardGui(guiFolder, parameters) {
-    this.guiFolder = guiFolder;
-    this.parameters = parameters;
-    this.parameterKeys = ['period_x', 'phase_x', 'amplitude_x', 'period_y', 'phase_y', 'amplitude_y'];
-    this.controllers = [
-        guiFolder.add(parameters, 'period_x').min(1).step(1).name("Period X"),
-        guiFolder.add(parameters, 'phase_x').min(0).max(2 * Math.PI).step(0.1).name("Phase X"),
-        guiFolder.add(parameters, 'amplitude_x').min(0).name("Amplitude X"),
+    GuiObject.call(this, guiFolder, parameters,
+        [ 'period_x', 'phase_x', 'amplitude_x', 'period_y', 'phase_y', 'amplitude_y' ],
+        [ guiFolder.add(parameters, 'period_x').min(1).step(1).name("Period X"),
+          guiFolder.add(parameters, 'phase_x').min(0).max(2 * Math.PI).step(0.1).name("Phase X"),
+          guiFolder.add(parameters, 'amplitude_x').min(0).name("Amplitude X"),
 
-        guiFolder.add(parameters, 'period_y').min(1).step(1).name("Period Y"),
-        guiFolder.add(parameters, 'phase_y').min(0).max(2 * Math.PI).step(0.1).name("Phase Y"),
-        guiFolder.add(parameters, 'amplitude_y').min(0).name("Amplitude Y"),
-    ];
+          guiFolder.add(parameters, 'period_y').min(1).step(1).name("Period Y"),
+          guiFolder.add(parameters, 'phase_y').min(0).max(2 * Math.PI).step(0.1).name("Phase Y"),
+          guiFolder.add(parameters, 'amplitude_y').min(0).name("Amplitude Y") ]);
 }
 
-SwingingBoardGui.prototype.destroy = function() {
-    for (var c of this.controllers) { this.guiFolder.remove(c); }
-    for (var p of this.parameterKeys) { delete this.parameters[p]; }
-};
+Extend(SwingingBoardGui, GuiObject);
 
 
 function PendulumGui(guiFolder, parameters) {
-    this.guiFolder = guiFolder;
-    this.parameters = parameters;
-    this.parameterKeys = ['period', 'phase', 'amplitude'];
-    this.controllers = [
-        guiFolder.add(parameters, 'period').min(1).step(1).name("Period"),
-        guiFolder.add(parameters, 'phase').min(0).max(2 * Math.PI).step(0.1).name("Phase"),
-        guiFolder.add(parameters, 'amplitude').min(0).name("Amplitude")
-    ];
+    GuiObject.call(this, guiFolder, parameters,
+        [ 'period', 'phase', 'amplitude' ],
+        [ guiFolder.add(parameters, 'period').min(1).step(1).name("Period"),
+          guiFolder.add(parameters, 'phase').min(0).max(2 * Math.PI).step(0.1).name("Phase"),
+          guiFolder.add(parameters, 'amplitude').min(0).name("Amplitude") ]);
 }
 
-PendulumGui.prototype.destroy = function() {
-    for (var c of this.controllers) { this.guiFolder.remove(c); }
-    for (var p of this.parameterKeys) { delete this.parameters[p]; }
-};
+Extend(PendulumGui, GuiObject);
 
 
 function HarmonographDatGui(gui, machineChangedCallback) {
