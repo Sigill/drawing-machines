@@ -262,21 +262,11 @@ ExactContext.prototype.projectAndRound = function(x, y) {
 
 ExactContext.prototype.moveTo = function(x, y, rx, ry) {
     var p = this.matrix.applyToPoint(x, y);
-    var pr = { x: Math.round(p.x), y: Math.round(p.y) };
-    if (rx)
-        p.x = pr.x > p.x ? pr.x - 0.5 : pr.x + 0.5;
-    if (ry)
-        p.y = pr.y > p.y ? pr.y - 0.5 : pr.y + 0.5;
     this.ctx.moveTo(p.x, p.y);
 };
 
 ExactContext.prototype.lineTo = function(x, y, rx, ry) {
     var p = this.matrix.applyToPoint(x, y);
-    var pr = { x: Math.round(p.x), y: Math.round(p.y) };
-    if (rx)
-        p.x = pr.x > p.x ? pr.x - 0.5 : pr.x + 0.5;
-    if (ry)
-        p.y = pr.y > p.y ? pr.y - 0.5 : pr.y + 0.5;
     this.ctx.lineTo(p.x, p.y);
 };
 
