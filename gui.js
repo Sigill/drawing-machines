@@ -8,8 +8,8 @@ function GuiObject(guiFolder, parameters, keys, controllers) {
 }
 
 GuiObject.prototype.destroy = function() {
-    for (var c of this.controllers) { this.guiFolder.remove(c); }
-    for (var p of this.parameterKeys) { delete this.parameters[p]; }
+    for (var i = 0, l = this.controllers.length; i < l; ++i) { this.guiFolder.remove(this.controllers[i]); }
+    for (var i = 0, l = this.parameterKeys.length; i < l; ++i) { delete this.parameters[this.parameterKeys[i]]; }
 };
 
 function OscillatorGui(guiFolder, parameters) {
@@ -197,8 +197,8 @@ PintographDatGui.prototype.loadArmGui = function(type) {
         this.armGui = new PantographGui(this.armFolder, this.parameters['arm']);
     }
 
-    for (var c of this.armGui.controllers) {
-        c.onChange(this.machineChangedCallback);
+    for (var i = 0, l = this.armGui.controllers.length; i < l; ++i) {
+        this.armGui.controllers[i].onChange(this.machineChangedCallback);
     }
 };
 
@@ -229,8 +229,8 @@ PintographDatGui.prototype.loadLeftOscillatorGui = function(type) {
         this.leftOscillatorGui = new OscillatorGui(this.leftOscFolder, this.parameters['leftOscillator']);
     }
 
-    for (var c of this.leftOscillatorGui.controllers) {
-        c.onChange(this.machineChangedCallback);
+    for (var i = 0, l = this.leftOscillatorGui.controllers.length; i < l; ++i) {
+        this.leftOscillatorGui.controllers[i].onChange(this.machineChangedCallback);
     }
 };
 
@@ -261,8 +261,8 @@ PintographDatGui.prototype.loadRightOscillatorGui = function(type) {
         this.rightOscillatorGui = new OscillatorGui(this.rightOscFolder, this.parameters['rightOscillator']);
     }
 
-    for (var c of this.rightOscillatorGui.controllers) {
-        c.onChange(this.machineChangedCallback);
+    for (var i = 0, l = this.rightOscillatorGui.controllers.length; i < l; ++i) {
+        this.rightOscillatorGui.controllers[i].onChange(this.machineChangedCallback);
     }
 };
 
@@ -391,8 +391,8 @@ HarmonographDatGui.prototype.loadBoardGui = function(type) {
         this.boardGui = new SwingingBoardGui(this.boardFolder, this.parameters['board']);
     }
 
-    for (var c of this.boardGui.controllers) {
-        c.onChange(this.machineChangedCallback);
+    for (var i = 0, l = this.boardGui.controllers.length; i < l; ++i) {
+        this.boardGui.controllers[i].onChange(this.machineChangedCallback);
     }
 };
 
@@ -407,8 +407,8 @@ HarmonographDatGui.prototype.loadXPendulumGui = function() {
     this.parameters['x_pendulum'] = parameters;
     this.xPendulumGui = new PendulumGui(this.xPendulumFolder, this.parameters['x_pendulum']);
 
-    for (var c of this.xPendulumGui.controllers) {
-        c.onChange(this.machineChangedCallback);
+    for (var i = 0, l = this.xPendulumGui.controllers.length; i < l; ++i) {
+        this.xPendulumGui.controllers[i].onChange(this.machineChangedCallback);
     }
 };
 
@@ -423,7 +423,7 @@ HarmonographDatGui.prototype.loadYPendulumGui = function() {
     this.parameters['y_pendulum'] = parameters;
     this.yPendulumGui = new PendulumGui(this.yPendulumFolder, this.parameters['y_pendulum']);
 
-    for (var c of this.yPendulumGui.controllers) {
-        c.onChange(this.machineChangedCallback);
+    for (var i = 0, l = this.yPendulumGui.controllers.length; i < l; ++i) {
+        this.yPendulumGui.controllers[i].onChange(this.machineChangedCallback);
     }
 };

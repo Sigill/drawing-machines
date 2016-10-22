@@ -41,13 +41,15 @@
     <script src="stats.min.js"></script>
     <script src="observable.js"></script>
     <script src="requestAnimationFrame.js"></script>
-    <script src="dat.gui.js"></script>
+    <script src="dat.gui.min.js"></script>
     <script src="matrix.min.js"></script>
     <script src="common.js"></script>
     <script src="core.js"></script>
     <script src="canvas.js"></script>
     <script src="gui.js"></script>
     <script>
+        "use strict";
+
         var stats = new Stats();
         stats.setMode(0); // 0: fps, 1: ms
         stats.domElement.style.position = 'absolute';
@@ -56,10 +58,11 @@
         document.body.appendChild( stats.domElement );
 
         function notifyStats(message) {
-            if(message == 'beginUpdate')
+            if(message == 'beginUpdate') {
                 stats.begin();
-            else if(message == 'endUpdate')
+            } else if(message == 'endUpdate') {
                 stats.end();
+            }
         }
 
         var canvas    = document.getElementById('c');
@@ -92,8 +95,6 @@
             if (machine != null) { machine.running = false; }
 
             var animate = machine == null ? false : machine.animate;
-
-            delete machine;
 
             machine = _machine;
             machine.canvas = canvas;

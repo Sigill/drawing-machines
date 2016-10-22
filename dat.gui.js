@@ -2652,7 +2652,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var SUPPORTS_LOCAL_STORAGE = function () {
 	  try {
-	    return 'localStorage' in window && window.localStorage !== null;
+	    return 'localStorage' in window && windowlocalStorage !== undefined && window.localStorage !== null;
 	  } catch (e) {
 	    return false;
 	  }

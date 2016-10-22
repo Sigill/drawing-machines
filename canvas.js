@@ -134,8 +134,8 @@ Pantograph.prototype.draw = function(ctx, leftHandle, rightHandle) {
 
 
 StaticBoard.prototype.transform = function(time, ctx) {};
-SwingingBoard.prototype.transform = function(time, ctx) { ctx.exact.translate(-this.x.at(time), -this.y.at(time)); }
-RotatingBoard.prototype.transform = function(time, ctx) { ctx.exact.rotate(time / this.period); }
+SwingingBoard.prototype.transform = function(time, ctx) { ctx.exact.translate(-this.x.at(time), -this.y.at(time)); };
+RotatingBoard.prototype.transform = function(time, ctx) { ctx.exact.rotate(time / this.period); };
 
 
 function CanvasPintograph(parameters, speed) {
@@ -175,8 +175,8 @@ CanvasPintograph.prototype.draw = function(time) {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     this.ctx.exact.reset();
-    this.ctx.exact.translate(ctx.zoompan.pan.x, ctx.zoompan.pan.y);
-    this.ctx.exact.scale(ctx.zoompan.scale, ctx.zoompan.scale);
+    this.ctx.exact.translate(this.ctx.zoompan.pan.x, this.ctx.zoompan.pan.y);
+    this.ctx.exact.scale(this.ctx.zoompan.scale, this.ctx.zoompan.scale);
 
     this.ctx.strokeStyle = 'orangered';
     this.ctx.lineWidth = 1;
@@ -258,9 +258,9 @@ CanvasHarmonograph.prototype.draw = function(time) {
     this.ctx.setTransform(1,0,0,1,0,0);
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.exact.reset();
-    this.ctx.exact.translate(ctx.zoompan.scale * this.canvas.width  / 2.0 + ctx.zoompan.pan.x,
-                             ctx.zoompan.scale * this.canvas.height / 2.0 + ctx.zoompan.pan.y);
-    this.ctx.exact.scale(ctx.zoompan.scale, ctx.zoompan.scale);
+    this.ctx.exact.translate(this.ctx.zoompan.scale * this.canvas.width  / 2.0 + this.ctx.zoompan.pan.x,
+                             this.ctx.zoompan.scale * this.canvas.height / 2.0 + this.ctx.zoompan.pan.y);
+    this.ctx.exact.scale(this.ctx.zoompan.scale, this.ctx.zoompan.scale);
 
     this.ctx.exact.pushMatrix();
         this.board.transform(this.lastPoint / this.precision, this.ctx);
@@ -278,7 +278,7 @@ CanvasHarmonograph.prototype.draw = function(time) {
     var px = this.x.at(this.lastPoint / this.precision);
     var py = this.y.at(this.lastPoint / this.precision);
 
-    var p = ctx.exact.projectAndRound(px, py);
+    var p = this.ctx.exact.projectAndRound(px, py);
 
     this.ctx.beginPath();
         this.ctx.moveTo(p.x + 0.5, 0                 );
