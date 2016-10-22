@@ -2,83 +2,82 @@
 
 Epitrochoide.prototype.draw = function(ctx, t) {
     var theta = this.theta(t);
+
     var cx = this.position.x, cy = this.position.y;
+
     ctx.beginPath();
-    ctx.arc(cx, cy, this.R, 2 * Math.PI, false);
-    ctx.moveTo(this.position.x - 3, this.position.y + 0.5);
-    ctx.lineTo(this.position.x + 4, this.position.y + 0.5);
-    ctx.moveTo(this.position.x + 0.5, this.position.y - 3);
-    ctx.lineTo(this.position.x + 0.5, this.position.y + 4);
+        ctx.exact.arc(cx, cy, this.R, 0, 2 * Math.PI, false);
+
+        var c  = ctx.exact.projectAndRound(cx, cy);
+        ctx.moveTo(c.x - 3 * ctx.zoompan.scale    , c.y + 0.5);
+        ctx.lineTo(c.x + 3 * ctx.zoompan.scale + 1, c.y + 0.5);
+        ctx.moveTo(c.x + 0.5, c.y - 3 * ctx.zoompan.scale    );
+        ctx.lineTo(c.x + 0.5, c.y + 3 * ctx.zoompan.scale + 1);
     ctx.stroke();
 
 
     if(this.r > 0) {
-        var p = new Vector();
-        p.x = (this.R + this.r) * Math.cos(theta);
-        p.y = (this.R + this.r) * Math.sin(theta);
+        var p = new Vector((this.R + this.r) * Math.cos(theta), (this.R + this.r) * Math.sin(theta));
         p.add(this.position);
         ctx.beginPath();
-        ctx.arc(p.x, p.y, this.r, 2 * Math.PI, false);
+            ctx.exact.arc(p.x, p.y, this.r, 0, 2 * Math.PI, false);
         ctx.stroke();
         ctx.beginPath();
-        ctx.arc(p.x, p.y, this.d, 2 * Math.PI, false);
+            ctx.exact.arc(p.x, p.y, this.d, 0, 2 * Math.PI, false);
         ctx.stroke();
 
-        var p2 = new Vector(p.x, p.y);
-        p2.sub(this.position);
+        var p2 = p.copy();
         p2.x -= this.d * Math.cos(theta * (this.R + this.r) / this.r + this.phase2);
         p2.y -= this.d * Math.sin(theta * (this.R + this.r) / this.r + this.phase2);
-        p2.add(this.position);
         ctx.beginPath();
-        ctx.moveTo(p.x, p.y);
-        ctx.lineTo(p2.x, p2.y);
+            ctx.exact.moveTo(p.x, p.y);
+            ctx.exact.lineTo(p2.x, p2.y);
         ctx.stroke();
     }
 
     var p = this.period();
     for(var i = 0; i <= p; ++i) {
-        ctx.fillRect(Math.round(this.points[i].x), Math.round(this.points[i].y), 1, 1);
+        ctx.exact.dot(this.points[i].x, this.points[i].y);
     }
 };
 
 Hypotrochoide.prototype.draw = function(ctx, t) {
     var theta = this.theta(t);
+
     var cx = this.position.x, cy = this.position.y;
+
     ctx.beginPath();
-    ctx.arc(cx, cy, this.R, 2 * Math.PI, false);
-    ctx.moveTo(this.position.x-3, this.position.y+0.5);
-    ctx.lineTo(this.position.x+4, this.position.y+0.5);
-    ctx.moveTo(this.position.x+0.5, this.position.y-3);
-    ctx.lineTo(this.position.x+0.5, this.position.y+4);
+        ctx.exact.arc(cx, cy, this.R, 0, 2 * Math.PI, false);
+
+        var c  = ctx.exact.projectAndRound(cx, cy);
+        ctx.moveTo(c.x - 3 * ctx.zoompan.scale    , c.y + 0.5);
+        ctx.lineTo(c.x + 3 * ctx.zoompan.scale + 1, c.y + 0.5);
+        ctx.moveTo(c.x + 0.5, c.y - 3 * ctx.zoompan.scale    );
+        ctx.lineTo(c.x + 0.5, c.y + 3 * ctx.zoompan.scale + 1);
     ctx.stroke();
 
-
     if(this.r > 0) {
-        var p = new Vector();
-        p.x = (this.R - this.r) * Math.cos(theta);
-        p.y = (this.R - this.r) * Math.sin(theta);
+        var p = new Vector((this.R - this.r) * Math.cos(theta), (this.R - this.r) * Math.sin(theta));
         p.add(this.position);
         ctx.beginPath();
-        ctx.arc(p.x, p.y, this.r, 2 * Math.PI, false);
+            ctx.exact.arc(p.x, p.y, this.r, 0, 2 * Math.PI, false);
         ctx.stroke();
         ctx.beginPath();
-        ctx.arc(p.x, p.y, this.d, 2 * Math.PI, false);
+            ctx.exact.arc(p.x, p.y, this.d, 0, 2 * Math.PI, false);
         ctx.stroke();
 
-        var p2 = new Vector(p.x, p.y);
-        p2.sub(this.position);
+        var p2 = p.copy();
         p2.x += this.d * Math.cos(theta * (this.R - this.r) / this.r + this.phase2);
         p2.y -= this.d * Math.sin(theta * (this.R - this.r) / this.r + this.phase2);
-        p2.add(this.position);
         ctx.beginPath();
-        ctx.moveTo(p.x, p.y);
-        ctx.lineTo(p2.x, p2.y);
+            ctx.exact.moveTo(p.x, p.y);
+            ctx.exact.lineTo(p2.x, p2.y);
         ctx.stroke();
     }
 
     var p = this.period();
     for(var i = 0; i <= p; ++i) {
-        ctx.fillRect(Math.round(this.points[i].x), Math.round(this.points[i].y), 1, 1);
+        ctx.exact.dot(this.points[i].x, this.points[i].y);
     }
 };
 
@@ -88,10 +87,10 @@ SimpleArticulatedArm.prototype.draw = function(ctx, leftHandle, rightHandle) {
     var intersect = intersections[0];
 
     ctx.beginPath();
-    ctx.moveTo(leftHandle.x, leftHandle.y);
-    ctx.lineTo(intersect.x, intersect.y);
-    ctx.moveTo(rightHandle.x, rightHandle.y);
-    ctx.lineTo(intersect.x, intersect.y);
+        ctx.exact.moveTo(leftHandle.x, leftHandle.y);
+        ctx.exact.lineTo(intersect.x, intersect.y);
+        ctx.exact.moveTo(rightHandle.x, rightHandle.y);
+        ctx.exact.lineTo(intersect.x, intersect.y);
     ctx.stroke();
 };
 
@@ -104,10 +103,10 @@ Pantograph.prototype.draw = function(ctx, leftHandle, rightHandle) {
     var rightArm = new Vector(intersect.x - rightHandle.x, intersect.y - rightHandle.y);
 
     ctx.beginPath();
-    ctx.moveTo(leftHandle.x, leftHandle.y);
-    ctx.lineTo(intersect.x, intersect.y);
-    ctx.moveTo(rightHandle.x, rightHandle.y);
-    ctx.lineTo(intersect.x, intersect.y);
+        ctx.exact.moveTo(leftHandle.x, leftHandle.y);
+        ctx.exact.lineTo(intersect.x, intersect.y);
+        ctx.exact.moveTo(rightHandle.x, rightHandle.y);
+        ctx.exact.lineTo(intersect.x, intersect.y);
     ctx.stroke();
 
     var leftArm2 = new Vector(leftArm.x, leftArm.y);
@@ -117,21 +116,27 @@ Pantograph.prototype.draw = function(ctx, leftHandle, rightHandle) {
     rightArm2.normalize(); rightArm2.mult(this.r2); rightArm2.add(intersect);
 
     ctx.beginPath();
-    ctx.moveTo(intersect.x, intersect.y);
-    ctx.lineTo(leftArm2.x, leftArm2.y);
-    ctx.moveTo(intersect.x, intersect.y);
-    ctx.lineTo(rightArm2.x, rightArm2.y);
+        ctx.exact.moveTo(intersect.x, intersect.y);
+        ctx.exact.lineTo(leftArm2.x, leftArm2.y);
+        ctx.exact.moveTo(intersect.x, intersect.y);
+        ctx.exact.lineTo(rightArm2.x, rightArm2.y);
     ctx.stroke();
 
     var intersections2 = circleIntersections(rightArm2.x, rightArm2.y, this.r3, leftArm2.x, leftArm2.y, this.l3);
 
     ctx.beginPath();
-    ctx.moveTo(leftArm2.x, leftArm2.y);
-    ctx.lineTo(intersections2[0].x, intersections2[0].y);
-    ctx.moveTo(rightArm2.x, rightArm2.y);
-    ctx.lineTo(intersections2[0].x, intersections2[0].y);
+        ctx.exact.moveTo(leftArm2.x, leftArm2.y);
+        ctx.exact.lineTo(intersections2[0].x, intersections2[0].y);
+        ctx.exact.moveTo(rightArm2.x, rightArm2.y);
+        ctx.exact.lineTo(intersections2[0].x, intersections2[0].y);
     ctx.stroke();
 };
+
+
+StaticBoard.prototype.transform = function(time, ctx) {};
+SwingingBoard.prototype.transform = function(time, ctx) { ctx.exact.translate(-this.x.at(time), -this.y.at(time)); }
+RotatingBoard.prototype.transform = function(time, ctx) { ctx.exact.rotate(time / this.period); }
+
 
 function CanvasPintograph(parameters, speed) {
     Pintograph.call(this, parameters);
@@ -168,7 +173,10 @@ CanvasPintograph.prototype.draw = function(time) {
 
     this.ctx.setTransform(1,0,0,1,0,0);
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    //this.ctx.translate(0.5, 0.5);
+
+    this.ctx.exact.reset();
+    this.ctx.exact.translate(ctx.zoompan.pan.x, ctx.zoompan.pan.y);
+    this.ctx.exact.scale(ctx.zoompan.scale, ctx.zoompan.scale);
 
     this.ctx.strokeStyle = 'orangered';
     this.ctx.lineWidth = 1;
@@ -249,32 +257,35 @@ CanvasHarmonograph.prototype.draw = function(time) {
 
     this.ctx.setTransform(1,0,0,1,0,0);
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.ctx.translate(this.canvas.width / 2.0, this.canvas.height / 2.0)
-    //this.ctx.translate(0.5, 0.5);
+    this.ctx.exact.reset();
+    this.ctx.exact.translate(ctx.zoompan.scale * this.canvas.width  / 2.0 + ctx.zoompan.pan.x,
+                             ctx.zoompan.scale * this.canvas.height / 2.0 + ctx.zoompan.pan.y);
+    this.ctx.exact.scale(ctx.zoompan.scale, ctx.zoompan.scale);
 
-    this.board.transform(this.lastPoint / this.precision, this.ctx);
+    this.ctx.exact.pushMatrix();
+        this.board.transform(this.lastPoint / this.precision, this.ctx);
 
-    this.ctx.strokeStyle = 'orangered';
-    this.ctx.fillStyle = 'orangered';
-    this.ctx.lineWidth = 1;
+        this.ctx.strokeStyle = 'orangered';
+        this.ctx.fillStyle = 'orangered';
+        this.ctx.lineWidth = 1;
 
-    drawPath(this.ctx, this.points, this.lastPoint, false);
+        drawPath(this.ctx, this.points, this.lastPoint, false);
+    this.ctx.exact.popMatrix();
 
     this.ctx.strokeStyle = 'white';
     this.ctx.fillStyle = 'white';
 
-    this.ctx.setTransform(1,0,0,1,0,0);
-    this.ctx.translate(this.canvas.width / 2.0, this.canvas.height / 2.0)
-
     var px = this.x.at(this.lastPoint / this.precision);
     var py = this.y.at(this.lastPoint / this.precision);
 
-    this.ctx.beginPath();
-    this.ctx.moveTo(px + 0.5, -this.canvas.height / 2.0);
-    this.ctx.lineTo(px + 0.5,  this.canvas.height / 2.0);
+    var p = ctx.exact.projectAndRound(px, py);
 
-    this.ctx.moveTo(-this.canvas.width / 2.0, py);
-    this.ctx.lineTo( this.canvas.width / 2.0, py);
+    this.ctx.beginPath();
+        this.ctx.moveTo(p.x + 0.5, 0                 );
+        this.ctx.lineTo(p.x + 0.5, this.canvas.height);
+
+        this.ctx.moveTo(0                , p.y + 0.5);
+        this.ctx.lineTo(this.canvas.width, p.y + 0.5);
     this.ctx.stroke();
 
     if (this.running) {

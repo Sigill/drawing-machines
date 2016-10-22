@@ -41,7 +41,8 @@
     <script src="stats.min.js"></script>
     <script src="observable.js"></script>
     <script src="requestAnimationFrame.js"></script>
-    <script src="dat.gui.min.js"></script>
+    <script src="dat.gui.js"></script>
+    <script src="matrix.min.js"></script>
     <script src="common.js"></script>
     <script src="core.js"></script>
     <script src="canvas.js"></script>
@@ -69,11 +70,21 @@
         function resizeCanvas() {
             canvas.width  = container.clientWidth;
             canvas.height = container.clientHeight;
-            if (machine) { machine.redraw(); }
+            redraw();
+        }
+
+        function redraw() {
+            if (machine && (!machine.animate || !machine.running)) { machine.redraw(); }
         }
 
         window.addEventListener('resize', resizeCanvas, false);
         resizeCanvas();
+
+
+        var zoompan = new ZoomPanController(canvas, redraw);
+        ctx.zoompan = zoompan;
+
+        ctx.exact = new ExactContext(ctx);
 
         function setMachine(_machine) {
             console.log("Machine changed");
@@ -112,6 +123,15 @@
 
         var factory = new CanvasDrawingMachineDatGui(setMachine, setSpeed, animate, showMessage);
         factory.loadMachineGui('Pintograph');
+
+        var last = null;
+
+        canvas.addEventListener('mousedown', zoompan.startEvent.bind(zoompan), false);
+        canvas.addEventListener('mousemove', zoompan.moveEvent.bind(zoompan), false);
+        canvas.addEventListener('mouseup', zoompan.endEvent.bind(zoompan), false);
+        canvas.addEventListener('mouseleave', zoompan.endEvent.bind(zoompan), false);
+        canvas.addEventListener('mousewheel', zoompan.zoomEvent.bind(zoompan), false);
+        canvas.addEventListener('DOMMouseScroll', zoompan.zoomEvent.bind(zoompan), false);
     </script>
 </body>
 </html>

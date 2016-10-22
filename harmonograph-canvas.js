@@ -3,12 +3,14 @@
 function CanvasHarmonograph(canvasID) {
     Harmonograph.call(this);
 
-    this.canvas    = document.getElementById(canvasID);
-    this.container = this.canvas.parentNode;
-    this.ctx       = this.canvas.getContext('2d');
-    this.speed     = 120;
-    this.animate   = false;
-    this.running   = false;
+    this.canvas      = document.getElementById(canvasID);
+    this.container   = this.canvas.parentNode;
+    this.ctx         = this.canvas.getContext('2d');
+    this.ctx.zoompan = new ZoomPanController(this.canvas, null);
+    this.ctx.exact   = new ExactContext(this.ctx);
+    this.speed       = 120;
+    this.animate     = false;
+    this.running     = false;
     this.restart();
 
     this.updateObservable = new Observable();

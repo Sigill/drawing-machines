@@ -111,9 +111,9 @@ function drawPath(ctx, points, upto, closeWhenComplete) {
 
     ctx.beginPath();
 
-    ctx.moveTo(points[0].x, points[0].y);
+    ctx.exact.moveTo(points[0].x, points[0].y);
     for(var i = 1; i <= lastPoint; ++i) {
-        ctx.lineTo(points[i].x, points[i].y);
+        ctx.exact.lineTo(points[i].x, points[i].y);
     }
 
     if (closeWhenComplete && upto == points.length - 1) {
@@ -122,3 +122,142 @@ function drawPath(ctx, points, upto, closeWhenComplete) {
 
     ctx.stroke();
 }
+
+function ZoomPanController(canvas, redrawCallback) {
+    this.canvas = canvas;
+    this.redrawCallback = redrawCallback;
+
+    this.scaleVelocity = 0.01;
+
+    this.minLogScale = -5;
+    this.maxLogScale = 5;
+
+    this.reset();
+}
+
+ZoomPanController.prototype.reset = function() {
+    this.pan = new Vector(0, 0);
+    this.last = null;
+    this.logScale = 0;
+    this.scale = 1;
+};
+
+ZoomPanController.prototype.startEvent = function(evt) {
+    //console.log('start');
+    this.last = new Vector(
+        evt.offsetX || (evt.pageX - this.canvas.offsetLeft),
+        evt.offsetY || (evt.pageY - this.canvas.offsetTop)
+    );
+};
+
+ZoomPanController.prototype.moveEvent = function(evt) {
+    if (!this.last) return;
+
+    //console.log('move');
+
+    var ex = evt.offsetX || (evt.pageX - this.canvas.offsetLeft);
+    var ey = evt.offsetY || (evt.pageY - this.canvas.offsetTop);
+    this.pan.x = this.pan.x + ex - this.last.x;
+    this.pan.y =this. pan.y + ey - this.last.y;
+    this.last.x = ex;
+    this.last.y = ey;
+    this.redrawCallback();
+};
+
+ZoomPanController.prototype.endEvent = function(evt) {
+    //console.log('end');
+    this.last = null;
+};
+
+ZoomPanController.prototype.zoomEvent = function(evt) {
+    //console.log('zoom');
+    this.logScale = this.logScale - evt.detail * this.scaleVelocity;
+    if (this.logScale > this.maxLogScale)
+        this.logScale = maxLogScale;
+    if (this.logScale < this.minLogScale)
+        this.logScale = minLogScale;
+
+    var prevScale = this.scale;
+    this.scale = Math.pow(2, this.logScale);
+
+    var ex = evt.offsetX || (evt.pageX - this.canvas.offsetLeft);
+    var ey = evt.offsetY || (evt.pageY - this.canvas.offsetTop);
+    var mouse = new Vector(ex, ey);
+    this.pan = mouse.add(this.pan.copy().sub(mouse).mult(this.scale / prevScale));
+    this.redrawCallback();
+};
+
+
+function ExactContext(ctx) {
+    this.ctx = ctx;
+
+    this.matrix = new Matrix();
+    this.matrices = [];
+}
+
+ExactContext.prototype.reset = function() {
+    this.matrix.reset();
+    this.matrices.length = 0;
+};
+
+ExactContext.prototype.pushMatrix = function() {
+    this.matrices.push(this.matrix.clone());
+};
+
+ExactContext.prototype.popMatrix = function() {
+    this.matrix = this.matrices.pop();
+};
+
+ExactContext.prototype.translate = function(tx, ty) {
+    this.matrix.translate(tx, ty);
+};
+
+ExactContext.prototype.rotate = function(angle) {
+    this.matrix.rotate(angle);
+};
+
+ExactContext.prototype.scale = function(s) {
+    this.matrix.scale(s, s);
+};
+
+ExactContext.prototype.project = function(x, y) {
+    return this.matrix.applyToPoint(x, y);
+};
+
+ExactContext.prototype.projectAndRound = function(x, y) {
+    var p = this.matrix.applyToPoint(x, y);
+    var pi = new Vector(Math.round(p.x), Math.round(p.y));
+    if (pi.x > p.x) { pi.x = pi.x - 1; }
+    if (pi.y > p.y) { pi.y = pi.y - 1; }
+    return pi;
+};
+
+ExactContext.prototype.moveTo = function(x, y, rx, ry) {
+    var p = this.matrix.applyToPoint(x, y);
+    var pr = { x: Math.round(p.x), y: Math.round(p.y) };
+    if (rx)
+        p.x = pr.x > p.x ? pr.x - 0.5 : pr.x + 0.5;
+    if (ry)
+        p.y = pr.y > p.y ? pr.y - 0.5 : pr.y + 0.5;
+    this.ctx.moveTo(p.x, p.y);
+};
+
+ExactContext.prototype.lineTo = function(x, y, rx, ry) {
+    var p = this.matrix.applyToPoint(x, y);
+    var pr = { x: Math.round(p.x), y: Math.round(p.y) };
+    if (rx)
+        p.x = pr.x > p.x ? pr.x - 0.5 : pr.x + 0.5;
+    if (ry)
+        p.y = pr.y > p.y ? pr.y - 0.5 : pr.y + 0.5;
+    this.ctx.lineTo(p.x, p.y);
+};
+
+ExactContext.prototype.arc = function(x, y, radius, startAngle, endAngle, anticlockwise) {
+    var p = this.matrix.applyToPoint(x, y);
+    this.ctx.arc(p.x, p.y, radius * this.ctx.zoompan.scale, startAngle, endAngle, anticlockwise);
+};
+
+ExactContext.prototype.dot = function(x, y) {
+    var p = this.projectAndRound(x, y);
+    this.ctx.fillRect(p.x, p.y, 1, 1);
+};

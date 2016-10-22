@@ -223,7 +223,6 @@ function StaticBoard() {
 }
 StaticBoard.prototype.configure = function(damperType, term) {};
 StaticBoard.prototype.project = function(point, time) { return point; };
-StaticBoard.prototype.transform = function(time, ctx) {};
 
 
 function SwingingBoard(period_x, period_y, phase_x, phase_y, amplitude_x, amplitude_y, damperType, term) {
@@ -236,7 +235,6 @@ SwingingBoard.prototype.configure = function(damperType, term) {
     this.y.configure(damperType, term);
 };
 SwingingBoard.prototype.project = function(point, time) { return point.add(new Vector(this.x.at(time), this.y.at(time))); };
-SwingingBoard.prototype.transform = function(time, ctx) { ctx.translate(-this.x.at(time), -this.y.at(time)); }
 
 
 function RotatingBoard(period) {
@@ -249,7 +247,6 @@ RotatingBoard.prototype.project = function(point, time) {
     var s = Math.sin(-time / this.period);
     return new Vector(c * point.x - s * point.y, s * point.x + c * point.y);
 };
-RotatingBoard.prototype.transform = function(time, ctx) { ctx.rotate(time / this.period); }
 
 
 function Pintograph(parameters) {
