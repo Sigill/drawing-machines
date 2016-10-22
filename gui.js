@@ -28,6 +28,7 @@ function OscillatorGui(guiFolder, parameters) {
 
 Extend(OscillatorGui, GuiObject);
 
+
 function SimpleArticulatedArmGui(guiFolder, parameters) {
     GuiObject.call(this, guiFolder, parameters,
         [ 'l', 'r' ],
@@ -51,6 +52,7 @@ function PantographGui(guiFolder, parameters) {
 
 Extend(PantographGui, GuiObject);
 
+
 function CanvasDrawingMachineDatGui(machineChangedCallback, speedChangedCallback, animateCallback, showMessageCallback) {
     this.machineChangedCallback = machineChangedCallback;
     this.showMessageCallback = showMessageCallback;
@@ -58,8 +60,8 @@ function CanvasDrawingMachineDatGui(machineChangedCallback, speedChangedCallback
     this.MachinesTypes = [ 'Pintograph', 'Harmonograph' ];
     this.parameters = {
         'machineType': this.MachinesTypes[0],
-        'animate':     false,
-        'speed':       120
+        'animate'    : false,
+        'speed'      : 120
     };
 
     var machineTypeController = this.gui.add(this.parameters, 'machineType', this.MachinesTypes).name("Machine type");
@@ -77,10 +79,12 @@ CanvasDrawingMachineDatGui.prototype.loadMachineGui = function(type) {
 
     if (this.factory !== undefined) { this.factory.destroy(); }
 
+    this.parameters['machineParameters'] = {};
+
     if (type == this.MachinesTypes[0]) { // Pintograph
-        this.factory = new PintographDatGui(this.gui, this.onMachineChange.bind(this));
+        this.factory = new PintographDatGui(this.gui, this.parameters['machineParameters'], this.onMachineChange.bind(this));
     } else if (type == this.MachinesTypes[1]) { // Harmonograph
-        this.factory = new HarmonographDatGui(this.gui, this.onMachineChange.bind(this));
+        this.factory = new HarmonographDatGui(this.gui, this.parameters['machineParameters'], this.onMachineChange.bind(this));
     }
 
     this.onMachineChange();
@@ -89,31 +93,31 @@ CanvasDrawingMachineDatGui.prototype.loadMachineGui = function(type) {
 CanvasDrawingMachineDatGui.prototype.onMachineChange = function() {
     if (this.parameters['machineType'] == this.MachinesTypes[0]) { // Pintograph
         try {
-            this.machineChangedCallback(new CanvasPintograph(this.factory.parameters, this.parameters['speed']));
+            this.machineChangedCallback(new CanvasPintograph(this.parameters['machineParameters'], this.parameters['speed']));
             this.showMessageCallback(null);
         } catch (e) {
             this.showMessageCallback(e.message);
         }
     } else if (this.parameters['machineType'] == this.MachinesTypes[1]) { // Harmonograph
-        this.machineChangedCallback(new CanvasHarmonograph(this.factory.parameters, this.parameters['speed']));
+        this.machineChangedCallback(new CanvasHarmonograph(this.parameters['machineParameters'], this.parameters['speed']));
     }
 };
 
 
-function PintographDatGui(gui, machineChangedCallback) {
+function PintographDatGui(gui, parameters, machineChangedCallback) {
     this.ArmTypes        = [ 'SimpleArticulatedArm', 'Pantograph' ];
     this.OscillatorTypes = [ 'Epitrochoide', 'Hypotrochoide' ];
     this.gui = gui;
     this.machineChangedCallback = machineChangedCallback;
 
-    this.parameters = {
-        'armType':             this.ArmTypes[0],
-        'arm':                 {},
-        'leftOscillatorType':  this.OscillatorTypes[0],
-        'leftOscillator':      {},
+    this.parameters = Object.assign(parameters, {
+        'armType'            : this.ArmTypes[0],
+        'arm'                : {},
+        'leftOscillatorType' : this.OscillatorTypes[0],
+        'leftOscillator'     : {},
         'rightOscillatorType': this.OscillatorTypes[1],
-        'rightOscillator':     {}
-    };
+        'rightOscillator'    : {}
+    });
 
     this.armFolder      = gui.addFolder('Arms');
     this.leftOscFolder  = gui.addFolder('Left oscillator');
@@ -305,13 +309,14 @@ function PendulumGui(guiFolder, parameters) {
 Extend(PendulumGui, GuiObject);
 
 
-function HarmonographDatGui(gui, machineChangedCallback) {
+
+function HarmonographDatGui(gui, parameters, machineChangedCallback) {
     this.BoardTypes  = [ 'Static', 'Rotating', 'Swinging' ];
     this.DamperTypes = [ 'Linear', 'Exponential' ];
     this.gui = gui;
     this.machineChangedCallback = machineChangedCallback;
 
-    this.parameters = {
+    this.parameters = Object.assign(parameters, {
         'damperType':          this.DamperTypes[0],
         'damper':              {},
         'precision':           1,
@@ -320,7 +325,7 @@ function HarmonographDatGui(gui, machineChangedCallback) {
         'y_pendulum':          {},
         'boardType':           this.BoardTypes[0],
         'board':               {}
-    };
+    });
 
     this.precisionController   = gui.add(this.parameters, 'precision').min(0).name("Precision");
     this.damperTypeController  = gui.add(this.parameters, 'damperType', this.DamperTypes).name("Damper type");
