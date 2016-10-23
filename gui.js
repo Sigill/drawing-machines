@@ -286,11 +286,11 @@ Extend(RotatingBoardGui, GuiObject);
 function SwingingBoardGui(guiFolder, parameters) {
     GuiObject.call(this, guiFolder, parameters,
         [ 'period_x', 'phase_x', 'amplitude_x', 'period_y', 'phase_y', 'amplitude_y' ],
-        [ guiFolder.add(parameters, 'period_x').min(1).step(1).name("Period X"),
+        [ guiFolder.add(parameters, 'period_x').min(1).name("Period X"),
           guiFolder.add(parameters, 'phase_x').min(0).max(2 * Math.PI).step(0.1).name("Phase X"),
           guiFolder.add(parameters, 'amplitude_x').name("Amplitude X"),
 
-          guiFolder.add(parameters, 'period_y').min(1).step(1).name("Period Y"),
+          guiFolder.add(parameters, 'period_y').min(1).name("Period Y"),
           guiFolder.add(parameters, 'phase_y').min(0).max(2 * Math.PI).step(0.1).name("Phase Y"),
           guiFolder.add(parameters, 'amplitude_y').name("Amplitude Y") ]);
 }
@@ -301,7 +301,7 @@ Extend(SwingingBoardGui, GuiObject);
 function PendulumGui(guiFolder, parameters) {
     GuiObject.call(this, guiFolder, parameters,
         [ 'period', 'phase', 'amplitude' ],
-        [ guiFolder.add(parameters, 'period').min(1).step(1).name("Period"),
+        [ guiFolder.add(parameters, 'period').min(1).name("Period"),
           guiFolder.add(parameters, 'phase').min(0).max(2 * Math.PI).step(0.1).name("Phase"),
           guiFolder.add(parameters, 'amplitude').name("Amplitude") ]);
 }
